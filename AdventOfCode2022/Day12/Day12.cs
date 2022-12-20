@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day12
 {
-    public class Day12 : BaseAoc
+    public class Day12 : BaseAocV1
     {
 
         List<T> AStar<T>(T start, T goal, Func<T, int> h, Func<T, T, int> compare, Func<T, IEnumerable<T>> getNeighbors)
@@ -63,7 +63,7 @@ namespace AdventOfCode2022.Day12
             return new();
         }
 
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             (int X, int Y) S_pos = (0, 0);
             (int X, int Y) E_pos = (0, 0);
@@ -158,7 +158,7 @@ namespace AdventOfCode2022.Day12
             Console.WriteLine($"{path.Count - 1}");
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             (int X, int Y) S_pos = (0, 0);
             (int X, int Y) E_pos = (0, 0);

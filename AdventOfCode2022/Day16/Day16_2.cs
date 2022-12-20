@@ -14,7 +14,7 @@ using static AdventOfCode2022.Day16_2.Day16_2;
 namespace AdventOfCode2022.Day16_2
 {
     [TestFixture(TestName="Day16")]
-    public class Day16_2 : BaseAoc
+    public class Day16_2 : BaseAocV1
     {
         public class Room
         {
@@ -192,7 +192,7 @@ namespace AdventOfCode2022.Day16_2
             return bestState;
         }
 
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             var rooms = ReadInput(lines);
             var roomsWithValves = rooms.Values.Where(r => r.Flow > 0).ToList();
@@ -235,7 +235,7 @@ namespace AdventOfCode2022.Day16_2
             Write($"{string.Join(" -> ", res.Open)}");
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             var rooms = ReadInput(lines);
             var roomsWithValves = rooms.Values.Where(r => r.Flow > 0).ToList();

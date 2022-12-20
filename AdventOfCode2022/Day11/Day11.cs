@@ -24,7 +24,7 @@ namespace AdventOfCode2022.Day11
         public Func<BigInteger, int> Test { get; set; }
     }
 
-    public class Day11 : BaseAoc
+    public class Day11 : BaseAocV1
     {
         private List<Monkey> GetMonkeys()
         {
@@ -146,7 +146,7 @@ namespace AdventOfCode2022.Day11
             return monkies;
         }
 
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             var monkies = GetMonkeys();
 
@@ -169,7 +169,7 @@ namespace AdventOfCode2022.Day11
             Console.Write(m[0].Inspections * m[1].Inspections);
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             var monkies = GetMonkeys();
             BigInteger mod = monkies.Count == 4 ? (23 * 19 * 13 * 17) : (13*19*11*17*3*7*5*2);

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day13
 {
-    internal class Day13Alternate : BaseAoc
+    internal class Day13Alternate : BaseAocV1
     {
         bool isList(string s) => s.Length >= 1 && s[0] == '[';
         bool isInt(string s) => s.Length >= 1 && s[0] >= '0' && s[0] <= '9';
@@ -163,7 +163,7 @@ namespace AdventOfCode2022.Day13
             return 0;
         }
 
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             int indexSum = 0;
             for (int i = 0; i < lines.Count; i+=3)
@@ -184,7 +184,7 @@ namespace AdventOfCode2022.Day13
             Console.WriteLine(indexSum);
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             var sortLines = lines.Where(l => l != "").Append("[[2]]").Append("[[6]]").ToList();
             sortLines.Sort(compare);

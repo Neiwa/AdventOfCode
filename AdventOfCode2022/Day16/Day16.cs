@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day16
 {
-    internal class Day16 : BaseAoc
+    internal class Day16 : BaseAocV1
     {
         class Room
         {
@@ -162,7 +162,7 @@ namespace AdventOfCode2022.Day16
             }
         }
 
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             var rooms = ReadInput(lines);
             var roomsWithValves = rooms.Values.Where(r => r.Flow > 0).ToList();
@@ -235,7 +235,7 @@ namespace AdventOfCode2022.Day16
             ;
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             throw new NotImplementedException();
         }

@@ -20,7 +20,8 @@ namespace ConsoleRunner
 
             var sw = Stopwatch.StartNew();
 
-            p.PartTwoTest("example.txt", false);
+            //p.PartOneTest("input.txt", false);
+            p.PartTwoTest("example.txt", true);
 
             sw.Stop();
             Console.WriteLine($"Run time: {sw.Elapsed}");

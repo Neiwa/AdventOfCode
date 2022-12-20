@@ -5,9 +5,9 @@ namespace Core
 {
     public abstract class BaseAoc
     {
-        public bool Debug { get; set; } = false;
+        public bool Debug { get; protected set; } = false;
 
-        public List<string> GetInput(string fileName = "input.txt")
+        protected virtual List<string> GetInput(string fileName = "input.txt")
         {
             var name = GetType().Name;
 
@@ -36,7 +36,8 @@ namespace Core
         public void PartOneTest(string fileName, bool debug)
         {
             Debug = debug;
-            PartOne(GetInput(fileName));
+            var res = PartOne(GetInput(fileName));
+            Console.WriteLine(res);
         }
 
         [TestCase("input.txt", true)]
@@ -45,11 +46,12 @@ namespace Core
         public void PartTwoTest(string fileName, bool debug)
         {
             Debug = debug;
-            PartTwo(GetInput(fileName));
+            var res = PartTwo(GetInput(fileName));
+            Console.WriteLine(res);
         }
 
-        public abstract void PartOne(List<string> lines);
+        public abstract string PartOne(List<string> lines);
 
-        public abstract void PartTwo(List<string> lines);
+        public abstract string PartTwo(List<string> lines);
     }
 }

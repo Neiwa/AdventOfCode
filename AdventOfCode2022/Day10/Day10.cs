@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day10
 {
-    public class Day10 : BaseAoc
+    public class Day10 : BaseAocV1
     {
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             var cycle = 0;
             var X = 1;
@@ -42,7 +42,7 @@ namespace AdventOfCode2022.Day10
             Console.WriteLine(signal);
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             var cycle = 0;
             var X = 1;

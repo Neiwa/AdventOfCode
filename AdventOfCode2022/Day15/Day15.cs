@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day15
 {
-    internal class Day15 : BaseAoc
+    internal class Day15 : BaseAocV1
     {
         static (int X, int Y) GetCornerPos((int X, int Y, int Size) rect, int corner)
         {
@@ -57,7 +57,7 @@ namespace AdventOfCode2022.Day15
                 return true;
             }
         }
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             List<Sensor> sensors = new();
             HashSet<(int x, int y)> beacons = new();
@@ -117,7 +117,7 @@ namespace AdventOfCode2022.Day15
             yield return (topLeft.X + middle + 1, topLeft.Y + middle + 1, middle);
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             List<Sensor> sensors = new();
             HashSet<(int x, int y)> beacons = new();

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day14
 {
-    internal class Day14 : BaseAoc
+    internal class Day14 : BaseAocV1
     {
         IEnumerable<(int X, int Y)> getLine((int X, int Y) start, (int X, int Y) end)
         {
@@ -68,7 +68,7 @@ namespace AdventOfCode2022.Day14
             }
         }
 
-        public override void PartOne(List<string> lines)
+        public override void PartOneV1(List<string> lines)
         {
             Dictionary<(int X, int Y), char> cave = new();
             int minX = 500;
@@ -143,7 +143,7 @@ namespace AdventOfCode2022.Day14
             Console.WriteLine($"Sand count: {cave.Values.Count(c => c == 'O')}");
         }
 
-        public override void PartTwo(List<string> lines)
+        public override void PartTwoV1(List<string> lines)
         {
             Dictionary<(int X, int Y), char> cave = new();
             int minX = 500;
