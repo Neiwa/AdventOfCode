@@ -107,7 +107,7 @@ namespace AdventOfCode2022.Day17
             long minY = 1;
             bool loopDetected = false;
 
-            IndexCreationDictionary<int, IndexCreationDictionary<int, IndexCreationDictionary<long, (long, long)>>> stopLocations = new();
+            ValueCreationDictionary<int, ValueCreationDictionary<int, ValueCreationDictionary<long, (long, long)>>> stopLocations = new();
 
             while (figuresLeft >= 0)
             {

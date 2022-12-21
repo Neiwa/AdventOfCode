@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day13
 {
-    internal class Day13Alternate : BaseAocV1
+    internal class Day13 : BaseAocV1
     {
         bool isList(string s) => s.Length >= 1 && s[0] == '[';
         bool isInt(string s) => s.Length >= 1 && s[0] >= '0' && s[0] <= '9';
