@@ -93,7 +93,7 @@ namespace AdventOfCode2022.Day18
             return $"{totalSurfaceArea}";
         }
 
-        List<Point3D> Fill(Point3D init, List<Point3D> points, (Point3D TopLeft, Point3D BottomRight) bounds)
+        List<Point3D> Fill(Point3D init, List<Point3D> points, (Point3D TopLeft, Point3D BottomRight) bounds, bool stopOnOOB=true)
         {
             var fillPoints = new List<Point3D>() { init };
             var activePoints = new Queue<Point3D>();
@@ -122,7 +122,7 @@ namespace AdventOfCode2022.Day18
                             activePoints.Enqueue(newPoint);
                         }
                     }
-                    else
+                    else if (stopOnOOB)
                     {
                         return new();
                     }
@@ -167,6 +167,8 @@ namespace AdventOfCode2022.Day18
 
             (Point3D TopLeft, Point3D BottomRight) bounds = (new(minX, minY, minZ), new(maxX, maxY, maxZ));
 
+            var negativePoints = Fill(bounds.TopLeft, points, bounds, false);
+
             for (int z = minZ; z <= maxZ; z++)
             {
                 WriteLine($"Z = {z}");
@@ -192,9 +194,13 @@ namespace AdventOfCode2022.Day18
                         {
                             Write('#');
                         }
-                        else if(fillPoints.Contains(current))
+                        else if (fillPoints.Contains(current))
                         {
                             Write('+');
+                        }
+                        else if (negativePoints.Contains(current))
+                        {
+                            Write(' ');
                         }
                         else
                         {
