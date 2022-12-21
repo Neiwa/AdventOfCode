@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Spectre.Console;
+using System.Text;
+using System;
 
 namespace ConsoleRunner
 {
@@ -14,6 +16,16 @@ namespace ConsoleRunner
         public int Part { get; set; }
     }
 
+    class AnsiConsoleWriter : TextWriter
+    {
+        public override Encoding Encoding => Encoding.UTF8;
+
+        public override void Write(char value)
+        {
+            AnsiConsole.Write(value);
+        }
+    }
+
     internal class Program
     {
         static void Main(string[] args)
@@ -21,8 +33,6 @@ namespace ConsoleRunner
             var options = CommandLine.Parser.Default.ParseArguments<Options>(args).Value;
 
             
-
-
             new AdventOfCode2022.ReferenceMe();
 
             ValueCreationDictionary<int, ValueCreationDictionary<int, List<Type>>> types = new();
@@ -82,6 +92,8 @@ namespace ConsoleRunner
 
                 if (instance != null)
                 {
+                    instance.Writing += Instance_Writing;
+
                     AnsiConsole.MarkupLine($"[bold green]{yearChoice}-{dayChoice}[/] ({instance.GetType().Name})");
                     string file = (inputChoice & 2) == 0 ? "example.txt" : "input.txt";
                     bool debug = (inputChoice & 4) == 0;
@@ -107,9 +119,34 @@ namespace ConsoleRunner
                     sw.Stop();
                     AnsiConsole.MarkupLine($"Run time: {sw.Elapsed}");
                 }
+                else
+                {
+                    AnsiConsole.WriteLine("[bold red underline]Failed to instanciate class[/]");
+                }
 
 
-            } while (!AnsiConsole.Confirm("Exit?", false));
+            } while (!AnsiConsole.Confirm("Exit?"));
+        }
+
+        private static void Instance_Writing(object? sender, WriteEventArgs e)
+        {
+            e.Intercepted = true;
+
+            if (e.NewLine)
+            {
+                if (e.Value == null)
+                {
+                    AnsiConsole.WriteLine();
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine($"[[{DateTime.Now:HH:mm:ss}]] {string.Join("", Enumerable.Repeat("  ", e.Indent))}{e.Value}");
+                }
+            }
+            else
+            {
+                AnsiConsole.Write(e.Value);
+            }
         }
     }
 }

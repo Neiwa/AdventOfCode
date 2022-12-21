@@ -192,7 +192,7 @@ namespace AdventOfCode2022.Day17
                         if(currentRock.Position.Y == -1547)
                         {
                             Draw(null, segments, minY - 3, 'c', minY + 12);
-                            Write($"profile = {Convert.ToString(profile, 2)}");
+                            WriteLine($"profile = {Convert.ToString(profile, 2)}");
                         }
 
 
@@ -201,12 +201,12 @@ namespace AdventOfCode2022.Day17
                             (var oldY, var fCount) = tuple;
                             var currentFigureCount = figureCount - figuresLeft;
                             // Repeat detected
-                            Write($"profile = {Convert.ToString(profile, 2)}");
-                            Write($"currentRock.Position.Y = {currentRock.Position.Y}, oldY = {oldY}, fCount = {fCount}, currentFigureCount = {currentFigureCount}");
-                            Write($"Bf = {currentFigureCount - fCount}");
+                            WriteLine($"profile = {Convert.ToString(profile, 2)}");
+                            WriteLine($"currentRock.Position.Y = {currentRock.Position.Y}, oldY = {oldY}, fCount = {fCount}, currentFigureCount = {currentFigureCount}");
+                            WriteLine($"Bf = {currentFigureCount - fCount}");
                             var figureRepeatCount = (figureCount-fCount)/(currentFigureCount - fCount);
-                            Write($"figureRepeatCount(x coord) = {figureRepeatCount}");
-                            Write($"A+Bx={oldY + (currentRock.Position.Y - oldY) * figureRepeatCount}");
+                            WriteLine($"figureRepeatCount(x coord) = {figureRepeatCount}");
+                            WriteLine($"A+Bx={oldY + (currentRock.Position.Y - oldY) * figureRepeatCount}");
 
                             Draw(null, segments, minY - 3, 'D', minY + 12);
                             Draw(null, segments, oldY - 3, 'O', oldY + 12);
@@ -221,10 +221,10 @@ namespace AdventOfCode2022.Day17
                                     segments.GetSegmentAt(newY).Add(new LongPoint(point.X, newY));
                                 }
                             }
-                            Write($"OLD: minY = {minY}, figuresLeft = {figuresLeft}");
+                            WriteLine($"OLD: minY = {minY}, figuresLeft = {figuresLeft}");
                             minY = minY + yIncrease;
                             figuresLeft = figuresLeft - (currentFigureCount - fCount) * (figureRepeatCount - 1);
-                            Write($"NEW: minY = {minY}, figuresLeft = {figuresLeft}");
+                            WriteLine($"NEW: minY = {minY}, figuresLeft = {figuresLeft}");
                             loopDetected = true;
                             //return oldY + figureCount/(currentRock.Position.Y - oldY);
                         }

@@ -68,7 +68,7 @@ namespace AdventOfCode2022.Day13
             yield break;
         }
 
-        protected override void Write(string value, int indent = 0)
+        protected override void WriteLine(string value, int indent = 0, bool force = false)
         {
             if (Debug)
             {
@@ -85,7 +85,7 @@ namespace AdventOfCode2022.Day13
         {
             if (Debug)
             {
-                Write($"Compare {left} vs {right}", depth);
+                WriteLine($"Compare {left} vs {right}", depth);
             }
 
             if(isList(left) || isList(right))
@@ -98,7 +98,7 @@ namespace AdventOfCode2022.Day13
                 }
                 else if(isInt(left))
                 {
-                    Write($"Mixed types; convert left to [{left}] and retry", depth);
+                    WriteLine($"Mixed types; convert left to [{left}] and retry", depth);
                     leftElements = new() { left };
                 }
                 else
@@ -112,7 +112,7 @@ namespace AdventOfCode2022.Day13
                 }
                 else if (isInt(right))
                 {
-                    Write($"Mixed types; convert right to [{right}] and retry", depth);
+                    WriteLine($"Mixed types; convert right to [{right}] and retry", depth);
                     rightElements = new() { right };
                 }
                 else
@@ -124,7 +124,7 @@ namespace AdventOfCode2022.Day13
                 {
                     if (i + 1 > leftElements.Count)
                     {
-                        Write("Left side ran out of items, input OK", depth);
+                        WriteLine("Left side ran out of items, input OK", depth);
                         return 1;
                     }
                     var res = compare(leftElements[i], rightElements[i], depth + 1);
@@ -135,7 +135,7 @@ namespace AdventOfCode2022.Day13
                 }
                 if (leftElements.Count > rightElements.Count)
                 {
-                    Write("Right side ran out of items, input NOK", depth);
+                    WriteLine("Right side ran out of items, input NOK", depth);
                     return -1;
                 }
             }
@@ -146,11 +146,11 @@ namespace AdventOfCode2022.Day13
                 {
                     if(v>0)
                     {
-                        Write($"Left side is smaller, input OK", depth);
+                        WriteLine($"Left side is smaller, input OK", depth);
                     }
                     else if(v<0)
                     {
-                        Write($"Right side is smaller, input NOK", depth);
+                        WriteLine($"Right side is smaller, input NOK", depth);
                     }
                 }
                 return v;

@@ -132,8 +132,8 @@ namespace AdventOfCode2022.Day16_2
                             bestState = newState;
                             if (bestState.Score > 100)
                             {
-                                Write($"New best: {bestState.Score}");
-                                Write(string.Join(" -> ", bestState.Open), 1);
+                                WriteLine($"New best: {bestState.Score}");
+                                WriteLine(string.Join(" -> ", bestState.Open), 1);
                             }
                         }
 
@@ -177,8 +177,8 @@ namespace AdventOfCode2022.Day16_2
                         bestState = newState;
                         if (bestState.Score > 100)
                         {
-                            Write($"New best: {bestState.Score}");
-                            Write(string.Join(" -> ", bestState.Open), 1);
+                            WriteLine($"New best: {bestState.Score}");
+                            WriteLine(string.Join(" -> ", bestState.Open), 1);
                         }
                     }
                     potentialScore = newState.Score + CurrentBestPossibleRemainingPressureRelease(newState, dist, rooms);
@@ -223,7 +223,7 @@ namespace AdventOfCode2022.Day16_2
                 {
                     foreach (var (to, weight) in toDict)
                     {
-                        Write($"{from} -> {to} = {weight}");
+                        WriteLine($"{from} -> {to} = {weight}");
                     }
                 } 
             }
@@ -231,8 +231,8 @@ namespace AdventOfCode2022.Day16_2
             var res = R2(startRoom.Name, Dist, rooms);
 
             Console.WriteLine(res.Score);
-            Write($"{res.Score}");
-            Write($"{string.Join(" -> ", res.Open)}");
+            WriteLine($"{res.Score}");
+            WriteLine($"{string.Join(" -> ", res.Open)}");
         }
 
         public override void PartTwoV1(List<string> lines)
@@ -266,7 +266,7 @@ namespace AdventOfCode2022.Day16_2
                 {
                     foreach (var (to, weight) in toDict)
                     {
-                        Write($"{from} -> {to} = {weight}");
+                        WriteLine($"{from} -> {to} = {weight}");
                     }
                 }
             }
@@ -274,8 +274,8 @@ namespace AdventOfCode2022.Day16_2
             var res = R2(startRoom.Name, Dist, rooms, 26, 2);
 
             Console.WriteLine(res.Score);
-            Write($"{res.Score}");
-            Write($"{string.Join(" -> ", res.Open)}");
+            WriteLine($"{res.Score}");
+            WriteLine($"{string.Join(" -> ", res.Open)}");
         }
     }
 }
