@@ -133,7 +133,7 @@ namespace AdventOfCode2022.Day16_2
                             if (bestState.Score > 100)
                             {
                                 WriteLine($"New best: {bestState.Score}");
-                                WriteLine(string.Join(" -> ", bestState.Open), 1);
+                                WriteLine(string.Join(" -> ", bestState.Open), indent: 1);
                             }
                         }
 
@@ -178,7 +178,7 @@ namespace AdventOfCode2022.Day16_2
                         if (bestState.Score > 100)
                         {
                             WriteLine($"New best: {bestState.Score}");
-                            WriteLine(string.Join(" -> ", bestState.Open), 1);
+                            WriteLine(string.Join(" -> ", bestState.Open), indent: 1);
                         }
                     }
                     potentialScore = newState.Score + CurrentBestPossibleRemainingPressureRelease(newState, dist, rooms);

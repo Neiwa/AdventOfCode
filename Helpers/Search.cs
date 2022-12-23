@@ -19,32 +19,38 @@ namespace Helpers
         /// <param name="getNeighbors"></param>
         /// <param name="edgeWeight">Returns the weight of the edge between two nodes. (Default: 1)</param>
         /// <returns></returns>
-        public static List<T> AStar<T>(T start, T goal, Func<T, int> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, int>? edgeWeight = null)
+        public static List<T> AStar<T>(T start, T goal, Func<T, int> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, int>? edgeWeight = null) where T : notnull
         {
             if (edgeWeight == null)
             {
                 edgeWeight = (_, _) => 1;
             }
 
-            List<T> openSet = new();
-            openSet.Add(start);
+            List<T> openSet = new() { start };
             Dictionary<T, T> cameFrom = new();
-            Dictionary<T, int> gScore = new();
-            gScore.Add(start, 0);
-            Dictionary<T, int> fScore = new();
-            fScore.Add(start, h(start));
+            Dictionary<T, int> gScore = new() { { start, 0 } };
+            Dictionary<T, int> fScore = new() { { start, h(start) } };
+
             int getGScore(T pos)
             {
-                return gScore.ContainsKey(pos) ? gScore[pos] : int.MaxValue;
+                if(gScore.TryGetValue(pos, out var value))
+                {
+                    return value;
+                }
+                return int.MaxValue;
             }
             int getFScore(T pos)
             {
-                return fScore.ContainsKey(pos) ? fScore[pos] : int.MaxValue;
+                if (fScore.TryGetValue(pos, out var value))
+                {
+                    return value;
+                }
+                return int.MaxValue;
             }
 
             while (openSet.Count > 0)
             {
-                var current = openSet.MinBy(n => getGScore(n));
+                var current = openSet.MinBy(n => getFScore(n));
                 if (compare(current, goal))
                 {
                     List<T> path = new() { current };

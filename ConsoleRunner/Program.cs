@@ -97,6 +97,7 @@ namespace ConsoleRunner
                     AnsiConsole.MarkupLine($"[bold green]{yearChoice}-{dayChoice}[/] ({instance.GetType().Name})");
                     string file = (inputChoice & 2) == 0 ? "example.txt" : "input.txt";
                     bool debug = (inputChoice & 4) == 0;
+                    ActionLevel level = debug ? ActionLevel.Debug : ActionLevel.Trace;
                     AnsiConsole.MarkupLine($"{((inputChoice & 1) == 0 ? "[blue]PartOne" : "[yellow]PartTwo")}[/]  - {((inputChoice & 2) == 0 ? "Example" : "Input")}{((inputChoice & 4) == 0 ? " - [red]Debug[/]" : "")}");
 
                     sw.Start();
@@ -104,11 +105,11 @@ namespace ConsoleRunner
                     {
                         if ((inputChoice & 1) == 0)
                         {
-                            instance.PartOneTest(file, debug);
+                            instance.PartOneTest(file, level);
                         }
                         else
                         {
-                            instance.PartTwoTest(file, debug);
+                            instance.PartTwoTest(file, level);
                         }
                     }
                     catch (Exception ex)

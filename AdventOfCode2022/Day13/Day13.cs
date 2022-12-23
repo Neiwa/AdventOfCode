@@ -68,7 +68,7 @@ namespace AdventOfCode2022.Day13
             yield break;
         }
 
-        protected override void WriteLine(string value, int indent = 0, bool force = false)
+        protected override void WriteLine(string value, ActionLevel level = ActionLevel.Debug, int indent = 0, bool force = false)
         {
             if (Debug)
             {
@@ -85,7 +85,7 @@ namespace AdventOfCode2022.Day13
         {
             if (Debug)
             {
-                WriteLine($"Compare {left} vs {right}", depth);
+                WriteLine($"Compare {left} vs {right}", indent: depth);
             }
 
             if(isList(left) || isList(right))
@@ -98,7 +98,7 @@ namespace AdventOfCode2022.Day13
                 }
                 else if(isInt(left))
                 {
-                    WriteLine($"Mixed types; convert left to [{left}] and retry", depth);
+                    WriteLine($"Mixed types; convert left to [{left}] and retry", indent: depth);
                     leftElements = new() { left };
                 }
                 else
@@ -112,7 +112,7 @@ namespace AdventOfCode2022.Day13
                 }
                 else if (isInt(right))
                 {
-                    WriteLine($"Mixed types; convert right to [{right}] and retry", depth);
+                    WriteLine($"Mixed types; convert right to [{right}] and retry", indent: depth);
                     rightElements = new() { right };
                 }
                 else
@@ -124,7 +124,7 @@ namespace AdventOfCode2022.Day13
                 {
                     if (i + 1 > leftElements.Count)
                     {
-                        WriteLine("Left side ran out of items, input OK", depth);
+                        WriteLine("Left side ran out of items, input OK", indent: depth);
                         return 1;
                     }
                     var res = compare(leftElements[i], rightElements[i], depth + 1);
@@ -135,7 +135,7 @@ namespace AdventOfCode2022.Day13
                 }
                 if (leftElements.Count > rightElements.Count)
                 {
-                    WriteLine("Right side ran out of items, input NOK", depth);
+                    WriteLine("Right side ran out of items, input NOK", indent: depth);
                     return -1;
                 }
             }
@@ -146,11 +146,11 @@ namespace AdventOfCode2022.Day13
                 {
                     if(v>0)
                     {
-                        WriteLine($"Left side is smaller, input OK", depth);
+                        WriteLine($"Left side is smaller, input OK", indent: depth);
                     }
                     else if(v<0)
                     {
-                        WriteLine($"Right side is smaller, input NOK", depth);
+                        WriteLine($"Right side is smaller, input NOK", indent: depth);
                     }
                 }
                 return v;

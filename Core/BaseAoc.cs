@@ -10,11 +10,28 @@ namespace Core
         public bool NewLine { get; set; }
         public string? Value { get; set; } = null;
         public int Indent { get; set; } = 0;
+        public ActionLevel Level { get; set; }
+    }
+
+    public enum ActionLevel
+    {
+        Trace = 0,
+        Debug = 10,
+        Info = 20
     }
 
     public abstract class BaseAoc
     {
-        public bool Debug { get; protected set; } = false;
+        public bool Debug
+        {
+            get => Level <= ActionLevel.Debug;
+            protected set => Level = value ? ActionLevel.Debug : ActionLevel.Info;
+        }
+        protected ActionLevel Level { private get; set; } = ActionLevel.Info;
+        public bool IsLevel(ActionLevel level)
+        {
+            return Level <= level;
+        }
 
         public TextWriter Out { get; set; }
 
@@ -27,32 +44,35 @@ namespace Core
         public void SetUp()
         {
             Out = TestContext.Out;
+            Level = ActionLevel.Debug;
         }
 
         public event EventHandler<WriteEventArgs> Writing;
 
         public delegate WriteEventArgs WriteEventHandler(object sender, WriteEventArgs e);
 
-        protected virtual bool OnWriteLine(string? value = null, int indent = 0)
+        protected virtual bool OnWriteLine(ActionLevel level, string? value = null, int indent = 0)
         {
             WriteEventArgs e = new()
             {
                 Value = value,
                 Indent = indent,
-                NewLine = true
+                NewLine = true,
+                Level = level
             };
             Writing?.Invoke(this, e);
             //e = Writing?.Invoke(this, e) ?? e;
             return e.Intercepted;
         }
 
-        protected virtual bool OnWrite(string value)
+        protected virtual bool OnWrite(ActionLevel level, string value)
         {
             WriteEventArgs e = new()
             {
                 Value = value,
                 Indent = 0,
-                NewLine = false
+                NewLine = false,
+                Level = level
             };
             Writing?.Invoke(this, e);
             return e.Intercepted;
@@ -74,53 +94,55 @@ namespace Core
             return File.ReadAllLines(Path.Join(TestContext.CurrentContext.TestDirectory, name, fileName)).ToList();
         }
 
-        protected virtual void WriteLine(string value, int indent = 0, bool force = false)
+        protected virtual void WriteLine(string value, ActionLevel level = ActionLevel.Debug, int indent = 0, bool force = false)
         {
-            if ((Debug || force) && !OnWriteLine(value, indent))
+            if ((level >= Level || force) && !OnWriteLine(level, value, indent))
             {
                 Out.WriteLine($"[{DateTime.Now:HH:mm:ss}] {string.Join("", Enumerable.Repeat("  ", indent))}{value}");
             }
         }
-        protected virtual void WriteLine(bool force = false)
+        protected virtual void WriteLine(ActionLevel level = ActionLevel.Debug, bool force = false)
         {
-            if ((Debug || force) && !OnWriteLine())
+            if ((level >= Level || force) && !OnWriteLine(level))
             {
                 Out.WriteLine();
             }
         }
-        protected virtual void Write(string value, bool force = false)
+        protected virtual void Write(string value, ActionLevel level = ActionLevel.Debug, bool force = false)
         {
-            if ((Debug || force) && !OnWrite(value))
+            if ((level >= Level || force) && !OnWrite(level, value))
             {
                 Out.Write(value);
             }
         }
-        protected virtual void Write(char value, bool force = false)
+        protected virtual void Write(char value, ActionLevel level = ActionLevel.Debug, bool force = false)
         {
-            if ((Debug || force) && !OnWrite(value.ToString()))
+            if ((level >= Level || force) && !OnWrite(level, value.ToString()))
             {
                 Out.Write(value);
             }
         }
 
-        [TestCase("input.txt", true)]
-        [TestCase("input.txt", false)]
-        [TestCase("example.txt", true)]
-        public void PartOneTest(string fileName, bool debug)
+        [TestCase("input.txt", ActionLevel.Debug)]
+        [TestCase("input.txt", ActionLevel.Info)]
+        [TestCase("example.txt", ActionLevel.Debug)]
+        [TestCase("example.txt", ActionLevel.Trace)]
+        public void PartOneTest(string fileName, ActionLevel level)
         {
-            Debug = debug;
+            Level = level;
             var res = PartOne(GetInput(fileName));
-            WriteLine(res, force: true);
+            WriteLine(res, level: ActionLevel.Info);
         }
 
-        [TestCase("input.txt", true)]
-        [TestCase("input.txt", false)]
-        [TestCase("example.txt", true)]
-        public void PartTwoTest(string fileName, bool debug)
+        [TestCase("input.txt", ActionLevel.Debug)]
+        [TestCase("input.txt", ActionLevel.Info)]
+        [TestCase("example.txt", ActionLevel.Debug)]
+        [TestCase("example.txt", ActionLevel.Trace)]
+        public void PartTwoTest(string fileName, ActionLevel level)
         {
-            Debug = debug;
+            Level = level;
             var res = PartTwo(GetInput(fileName));
-            WriteLine(res, force: true);
+            WriteLine(res, level: ActionLevel.Info);
         }
 
         public abstract string PartOne(List<string> lines);
