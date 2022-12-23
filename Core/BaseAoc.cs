@@ -20,7 +20,7 @@ namespace Core
         Info = 20
     }
 
-    public abstract class BaseAoc<TInput>
+    public abstract class BaseAoc<TInput> : IBaseAoc
     {
         protected ActionLevel Level { get; set; } = ActionLevel.Info;
         protected bool IsLevel(ActionLevel level)
@@ -31,6 +31,8 @@ namespace Core
         public bool IsTrace => IsLevel(ActionLevel.Trace);
         public bool IsDebug => IsLevel(ActionLevel.Debug);
         public bool IsInfo => IsLevel(ActionLevel.Info);
+
+        protected string FileName { get; private set; }
 
         public TextWriter Out { get; set; }
 
@@ -121,6 +123,8 @@ namespace Core
             }
         }
 
+        protected TInput Input { get; private set; }
+
         protected abstract TInput ParseInput(List<string> lines);
 
         public abstract string PartOne(TInput input);
@@ -147,7 +151,9 @@ namespace Core
         private void RunTest(Func<TInput, string> partMethod, string fileName, ActionLevel level)
         {
             Level = level;
-            var res = partMethod(ParseInput(GetInput(fileName)));
+            FileName = fileName;
+            Input = ParseInput(GetInput(fileName));
+            var res = partMethod(Input);
             WriteLine($"Answer: {res}", level: ActionLevel.Info);
         }
     }

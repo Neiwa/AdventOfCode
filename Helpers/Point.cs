@@ -30,6 +30,11 @@ namespace Helpers
             return !left.Equals(right);
         }
 
+        public static Point operator *(Point left, int right)
+        {
+            return new Point(left.X*right, left.Y * right);
+        }
+
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))

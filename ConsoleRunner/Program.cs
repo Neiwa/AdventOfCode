@@ -37,7 +37,7 @@ namespace ConsoleRunner
 
             ValueCreationDictionary<int, ValueCreationDictionary<int, List<Type>>> types = new();
 
-            foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.IsSubclassOf(typeof(Core.BaseAocV2)) && t.IsAbstract == false))
+            foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.GetInterfaces().Contains(typeof(Core.IBaseAoc)) && t.IsAbstract == false))
             {
                 var match = Regex.Match(type?.Namespace ?? "", @"(\d{4})");
                 if (!match.Success)
@@ -86,7 +86,7 @@ namespace ConsoleRunner
                     .AddChoices(Enumerable.Range(0, 8))
                     .UseConverter(i => $"Part {(i & 1) + 1} - {((i & 2) == 0 ? "Example" : "Input")}{((i & 4) == 0 ? " - [red]Debug[/]" : "")}"));
 
-                BaseAocV2? instance = Activator.CreateInstance(typeChoice) as BaseAocV2;
+                IBaseAoc? instance = Activator.CreateInstance(typeChoice) as IBaseAoc;
 
                 var sw = new Stopwatch();
 
@@ -97,7 +97,7 @@ namespace ConsoleRunner
                     AnsiConsole.MarkupLine($"[bold green]{yearChoice}-{dayChoice}[/] ({instance.GetType().Name})");
                     string file = (inputChoice & 2) == 0 ? "example.txt" : "input.txt";
                     bool debug = (inputChoice & 4) == 0;
-                    ActionLevel level = debug ? ActionLevel.Debug : ActionLevel.Info;
+                    ActionLevel level = debug ? ActionLevel.Trace : ActionLevel.Info;
                     AnsiConsole.MarkupLine($"{((inputChoice & 1) == 0 ? "[blue]PartOne" : "[yellow]PartTwo")}[/]  - {((inputChoice & 2) == 0 ? "Example" : "Input")}{((inputChoice & 4) == 0 ? " - [red]Debug[/]" : "")}");
 
                     sw.Start();

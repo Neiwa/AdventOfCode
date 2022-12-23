@@ -23,5 +23,13 @@
         public Point Position { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+
+        public bool Contains(Point point)
+        {
+            return point.X >= Position.X &&
+                point.X <= Position.X + Width - 1 &&
+                point.Y >= Position.Y &&
+                point.Y <= Position.Y + Height - 1;
+        }
     }
 }
