@@ -24,7 +24,8 @@ namespace AdventOfCode2022.Day21
                     {
                         monkies.Add(name, new Monkey
                         {
-                            Number = long.Parse(match.Groups["number"].Value)
+                            Number = long.Parse(match.Groups["number"].Value),
+                            Operation = 'y'
                         });
                     }
                     else
@@ -49,7 +50,54 @@ namespace AdventOfCode2022.Day21
 
         public override string PartTwo(Dictionary<string, Monkey> monkies)
         {
-            throw new NotImplementedException();
+            Dictionary<string, string> monkeyLinks = new(); // Key: Child, Value: Parent
+            foreach (var (name, monkey) in monkies)
+            {
+                if (monkey.Operation != 'y')
+                {
+                    monkeyLinks.Add(monkey.LeftMonkey, name);
+                    monkeyLinks.Add(monkey.RightMonkey, name);
+                }
+            }
+
+            List<string> path = new();
+            string current = "humn";
+            do
+            {
+                path.Add(current);
+                current = monkeyLinks[current];
+            } while (current != "root");
+
+            if (monkies["root"].LeftMonkey == path.Last())
+            {
+                current = monkies["root"].RightMonkey;
+            }
+            else
+            {
+                current = monkies["root"].LeftMonkey;
+            }
+
+            long target = monkies[current].Yell(monkies);
+            WriteLine($"current = {current}", ActionLevel.Trace);
+            WriteLine($"target = {target}");
+            if (IsTrace)
+            {
+                foreach (var monkey in path)
+                {
+                    WriteLine(monkey, ActionLevel.Trace);
+                }
+            }
+
+            Stack<string> unYellers = new(path);
+
+            var shouldYell = monkies[unYellers.Pop()].UnYell(monkies, unYellers, target, this);
+
+            return shouldYell.ToString();
+        }
+
+        public void TraceWriteLine(string value)
+        {
+            WriteLine(value, ActionLevel.Trace);
         }
     }
 
@@ -81,6 +129,57 @@ namespace AdventOfCode2022.Day21
                     break;
             }
             return Number.Value;
+        }
+        public long UnYell(Dictionary<string, Monkey> monkies, Stack<string> unYellers, long target, Day21 day)
+        {
+            if (Operation == 'y') //Should only be humn
+            {
+                return target;
+            }
+
+            var unYeller = unYellers.Pop();
+
+
+            long newTarget = 0;
+            if (LeftMonkey == unYeller)
+            {
+                switch (Operation)
+                {
+                    case '+':
+                        newTarget = target - monkies[RightMonkey].Yell(monkies);
+                        break;
+                    case '-':
+                        newTarget = target + monkies[RightMonkey].Yell(monkies);
+                        break;
+                    case '*':
+                        newTarget = target / monkies[RightMonkey].Yell(monkies);
+                        break;
+                    case '/':
+                        newTarget = target * monkies[RightMonkey].Yell(monkies);
+                        break;
+                }
+            }
+            else
+            {
+                switch (Operation)
+                {
+                    case '+':
+                        newTarget = target - monkies[LeftMonkey].Yell(monkies);
+                        break;
+                    case '-':
+                        newTarget = monkies[LeftMonkey].Yell(monkies) - target;
+                        break;
+                    case '*':
+                        newTarget = target / monkies[LeftMonkey].Yell(monkies);
+                        break;
+                    case '/':
+                        newTarget = monkies[LeftMonkey].Yell(monkies) / target;
+                        break;
+                }
+            }
+            day.TraceWriteLine($"unYeller = {unYeller}, newTarget = {newTarget}");
+
+            return monkies[unYeller].UnYell(monkies, unYellers, newTarget, day);
         }
     }
 }

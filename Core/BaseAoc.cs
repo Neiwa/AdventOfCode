@@ -132,9 +132,7 @@ namespace Core
         [TestCase("example.txt", ActionLevel.Trace)]
         public void PartOneTest(string fileName, ActionLevel level)
         {
-            Level = level;
-            var res = PartOne(ParseInput(GetInput(fileName)));
-            WriteLine(res, level: ActionLevel.Info);
+            RunTest(PartOne, fileName, level);
         }
 
         [TestCase("input.txt", ActionLevel.Debug)]
@@ -143,9 +141,14 @@ namespace Core
         [TestCase("example.txt", ActionLevel.Trace)]
         public void PartTwoTest(string fileName, ActionLevel level)
         {
+            RunTest(PartTwo, fileName, level);
+        }
+
+        private void RunTest(Func<TInput, string> partMethod, string fileName, ActionLevel level)
+        {
             Level = level;
-            var res = PartTwo(ParseInput(GetInput(fileName)));
-            WriteLine(res, level: ActionLevel.Info);
+            var res = partMethod(ParseInput(GetInput(fileName)));
+            WriteLine($"Answer: {res}", level: ActionLevel.Info);
         }
     }
 }
