@@ -12,7 +12,7 @@ using static AdventOfCode2022.Day16_2.Day16_2;
 
 namespace AdventOfCode2022.Day19
 {
-    public class Day19 : BaseAoc
+    public class Day19 : BaseAocV2
     {
         class Blueprint
         {

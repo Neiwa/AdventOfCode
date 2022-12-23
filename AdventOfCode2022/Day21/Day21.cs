@@ -8,40 +8,9 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day21
 {
-    public class Day21 : BaseAoc
+    public class Day21 : BaseAoc<Dictionary<string, Monkey>>
     {
-        class Monkey
-        {
-            public long? Number { get; set; }
-
-            public char Operation { get; set; }
-
-            public string LeftMonkey { get; set; }
-
-            public string RightMonkey { get; set; }
-
-            public long Yell(Dictionary<string, Monkey> monkies)
-            {
-                switch (Operation)
-                {
-                    case '+':
-                        Number = Number ?? monkies[LeftMonkey].Yell(monkies) + monkies[RightMonkey].Yell(monkies);
-                        break;
-                    case '-':
-                        Number = Number ?? monkies[LeftMonkey].Yell(monkies) - monkies[RightMonkey].Yell(monkies);
-                        break;
-                    case '*':
-                        Number = Number ?? monkies[LeftMonkey].Yell(monkies) * monkies[RightMonkey].Yell(monkies);
-                        break;
-                    case '/':
-                        Number = Number ?? monkies[LeftMonkey].Yell(monkies) / monkies[RightMonkey].Yell(monkies);
-                        break;
-                }
-                return Number.Value;
-            }
-        }
-
-        Dictionary<string, Monkey> ParseInput(List<string> lines)
+        protected override Dictionary<string, Monkey> ParseInput(List<string> lines)
         {
             Dictionary<string, Monkey> monkies = new();
 
@@ -73,16 +42,45 @@ namespace AdventOfCode2022.Day21
             return monkies;
         }
 
-        public override string PartOne(List<string> lines)
+        public override string PartOne(Dictionary<string, Monkey> monkies)
         {
-            var monkies = ParseInput(lines);
-
             return monkies["root"].Yell(monkies).ToString();
         }
 
-        public override string PartTwo(List<string> lines)
+        public override string PartTwo(Dictionary<string, Monkey> monkies)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class Monkey
+    {
+        public long? Number { get; set; }
+
+        public char Operation { get; set; }
+
+        public string LeftMonkey { get; set; }
+
+        public string RightMonkey { get; set; }
+
+        public long Yell(Dictionary<string, Monkey> monkies)
+        {
+            switch (Operation)
+            {
+                case '+':
+                    Number = Number ?? monkies[LeftMonkey].Yell(monkies) + monkies[RightMonkey].Yell(monkies);
+                    break;
+                case '-':
+                    Number = Number ?? monkies[LeftMonkey].Yell(monkies) - monkies[RightMonkey].Yell(monkies);
+                    break;
+                case '*':
+                    Number = Number ?? monkies[LeftMonkey].Yell(monkies) * monkies[RightMonkey].Yell(monkies);
+                    break;
+                case '/':
+                    Number = Number ?? monkies[LeftMonkey].Yell(monkies) / monkies[RightMonkey].Yell(monkies);
+                    break;
+            }
+            return Number.Value;
         }
     }
 }

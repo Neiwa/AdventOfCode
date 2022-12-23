@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public abstract class BaseAocV1 : BaseAoc
+    public abstract class BaseAocV1 : BaseAocV2
     {
         public override string PartOne(List<string> lines)
         {

@@ -20,18 +20,17 @@ namespace Core
         Info = 20
     }
 
-    public abstract class BaseAoc
+    public abstract class BaseAoc<TInput>
     {
-        public bool Debug
-        {
-            get => Level <= ActionLevel.Debug;
-            protected set => Level = value ? ActionLevel.Debug : ActionLevel.Info;
-        }
-        protected ActionLevel Level { private get; set; } = ActionLevel.Info;
-        public bool IsLevel(ActionLevel level)
+        protected ActionLevel Level { get; set; } = ActionLevel.Info;
+        protected bool IsLevel(ActionLevel level)
         {
             return Level <= level;
         }
+
+        public bool IsTrace => IsLevel(ActionLevel.Trace);
+        public bool IsDebug => IsLevel(ActionLevel.Debug);
+        public bool IsInfo => IsLevel(ActionLevel.Info);
 
         public TextWriter Out { get; set; }
 
@@ -61,7 +60,6 @@ namespace Core
                 Level = level
             };
             Writing?.Invoke(this, e);
-            //e = Writing?.Invoke(this, e) ?? e;
             return e.Intercepted;
         }
 
@@ -123,6 +121,11 @@ namespace Core
             }
         }
 
+        protected abstract TInput ParseInput(List<string> lines);
+
+        public abstract string PartOne(TInput input);
+        public abstract string PartTwo(TInput input);
+
         [TestCase("input.txt", ActionLevel.Debug)]
         [TestCase("input.txt", ActionLevel.Info)]
         [TestCase("example.txt", ActionLevel.Debug)]
@@ -130,7 +133,7 @@ namespace Core
         public void PartOneTest(string fileName, ActionLevel level)
         {
             Level = level;
-            var res = PartOne(GetInput(fileName));
+            var res = PartOne(ParseInput(GetInput(fileName)));
             WriteLine(res, level: ActionLevel.Info);
         }
 
@@ -141,12 +144,8 @@ namespace Core
         public void PartTwoTest(string fileName, ActionLevel level)
         {
             Level = level;
-            var res = PartTwo(GetInput(fileName));
+            var res = PartTwo(ParseInput(GetInput(fileName)));
             WriteLine(res, level: ActionLevel.Info);
         }
-
-        public abstract string PartOne(List<string> lines);
-
-        public abstract string PartTwo(List<string> lines);
     }
 }

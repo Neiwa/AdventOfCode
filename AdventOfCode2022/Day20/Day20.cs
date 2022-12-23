@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day20
 {
-    public class Day20 : BaseAoc
+    public class Day20 : BaseAocV2
     {
         class Number
         {

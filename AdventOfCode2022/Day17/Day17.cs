@@ -74,7 +74,7 @@ namespace AdventOfCode2022.Day17
         }
     }
 
-    public class Day17 : BaseAoc
+    public class Day17 : BaseAocV2
     {
         List<Shape> shapes = new()
         {

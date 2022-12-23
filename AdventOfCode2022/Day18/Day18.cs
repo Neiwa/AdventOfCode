@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Day18
 {
-    public class Day18 : BaseAoc
+    public class Day18 : BaseAocV2
     {
         List<Point3D> ParseInput(List<string> lines)
         {
