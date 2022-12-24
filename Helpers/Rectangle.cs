@@ -5,6 +5,9 @@
         public Rectangle(Point position, int width) : this(position, width, width)
         {
         }
+        public Rectangle(Point position, Point bottomRight) : this(position, bottomRight.X - position.X + 1, bottomRight.Y - position.Y + 1)
+        {
+        }
         public Rectangle(Point position, int width, int height)
         {
             Position = position;
