@@ -16,6 +16,32 @@ namespace ConsoleRunner
         public int Part { get; set; }
     }
 
+    public class MenuChoice
+    {
+        public MenuChoice(int part, string? fileName, ActionLevel level)
+        {
+            FileName = fileName;
+            Level = level;
+            Part = part;
+        }
+
+        public string? FileName { get; set; }
+        public ActionLevel Level { get; set; }
+        public int Part { get; set; }
+
+
+        static Dictionary<ActionLevel, string> levelToColor = new()
+        {
+            { ActionLevel.Trace, "orange1" },
+            { ActionLevel.Debug, "red" },
+            { ActionLevel.Info, "grey" }
+        };
+        public string GetFormatted()
+        {
+            return $"{(Part == 1 ? "[blue]PartOne" : "[yellow]PartTwo")}[/] - {(FileName is null ? "<Input>" : Path.GetFileNameWithoutExtension(FileName))} - [{levelToColor[Level]}]{Level}[/]";
+        }
+    }
+
     class AnsiConsoleWriter : TextWriter
     {
         public override Encoding Encoding => Encoding.UTF8;
@@ -28,6 +54,23 @@ namespace ConsoleRunner
 
     internal class Program
     {
+        static List<MenuChoice> GenerateChoices()
+        {
+            return new()
+            {
+                new MenuChoice(1, "example.txt", ActionLevel.Trace),
+                new MenuChoice(2, "example.txt", ActionLevel.Trace),
+                new MenuChoice(1, "input.txt", ActionLevel.Debug),
+                new MenuChoice(2, "input.txt", ActionLevel.Debug),
+                new MenuChoice(1, "example.txt", ActionLevel.Debug),
+                new MenuChoice(2, "example.txt", ActionLevel.Debug),
+                new MenuChoice(1, "input.txt", ActionLevel.Info),
+                new MenuChoice(2, "input.txt", ActionLevel.Info),
+                new MenuChoice(1, null, ActionLevel.Trace),
+                new MenuChoice(2, null, ActionLevel.Trace)
+            };
+        }
+
         static void Main(string[] args)
         {
             var options = CommandLine.Parser.Default.ParseArguments<Options>(args).Value;
@@ -81,10 +124,16 @@ namespace ConsoleRunner
                         .UseConverter(t => t.Name));
                 }
 
-                var inputChoice = AnsiConsole.Prompt(new SelectionPrompt<int>()
+                var choices = GenerateChoices();
+                var inputChoice = AnsiConsole.Prompt(new SelectionPrompt<MenuChoice>()
                     .Title($"[bold green]{yearChoice}-{dayChoice}[/] ({typeChoice.Name}) - Select part")
-                    .AddChoices(Enumerable.Range(0, 8))
-                    .UseConverter(i => $"Part {(i & 1) + 1} - {((i & 2) == 0 ? "Example" : "Input")}{((i & 4) == 0 ? " - [red]Debug[/]" : "")}"));
+                    .AddChoices(choices)
+                    .UseConverter(c => c.GetFormatted()));
+
+                while (string.IsNullOrEmpty(inputChoice.FileName))
+                {
+                    inputChoice.FileName = AnsiConsole.Ask<string>("Enter path to file:");
+                }
 
                 IBaseAoc? instance = Activator.CreateInstance(typeChoice) as IBaseAoc;
 
@@ -95,21 +144,18 @@ namespace ConsoleRunner
                     instance.Writing += Instance_Writing;
 
                     AnsiConsole.MarkupLine($"[bold green]{yearChoice}-{dayChoice}[/] ({instance.GetType().Name})");
-                    string file = (inputChoice & 2) == 0 ? "example.txt" : "input.txt";
-                    bool debug = (inputChoice & 4) == 0;
-                    ActionLevel level = debug ? ActionLevel.Trace : ActionLevel.Info;
-                    AnsiConsole.MarkupLine($"{((inputChoice & 1) == 0 ? "[blue]PartOne" : "[yellow]PartTwo")}[/]  - {((inputChoice & 2) == 0 ? "Example" : "Input")}{((inputChoice & 4) == 0 ? " - [red]Debug[/]" : "")}");
+                    AnsiConsole.MarkupLine(inputChoice.GetFormatted());
 
                     sw.Start();
                     try
                     {
-                        if ((inputChoice & 1) == 0)
+                        if (inputChoice.Part == 1)
                         {
-                            instance.PartOneTest(file, level);
+                            instance.PartOneTest(inputChoice.FileName, inputChoice.Level);
                         }
                         else
                         {
-                            instance.PartTwoTest(file, level);
+                            instance.PartTwoTest(inputChoice.FileName, inputChoice.Level);
                         }
                     }
                     catch (Exception ex)
