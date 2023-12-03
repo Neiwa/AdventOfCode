@@ -77,6 +77,7 @@ namespace ConsoleRunner
 
             
             new AdventOfCode2022.ReferenceMe();
+            new AdventOfCode2023.ReferenceMe();
 
             ValueCreationDictionary<int, ValueCreationDictionary<int, List<Type>>> types = new();
 

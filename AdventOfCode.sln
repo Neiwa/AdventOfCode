@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Helpers\Helpers.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{4FF0A789-A9EF-4CBF-9E9F-E0B489D9B3F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers.Tests", "Helpers.Tests\Helpers.Tests.csproj", "{6B5BBAAB-3E7C-4C26-9EDE-ACA2E151DF0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers.Tests", "Helpers.Tests\Helpers.Tests.csproj", "{6B5BBAAB-3E7C-4C26-9EDE-ACA2E151DF0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleRunner", "ConsoleRunner\ConsoleRunner.csproj", "{DEDE38A2-435B-4D60-A083-B967B4A7E42E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleRunner", "ConsoleRunner\ConsoleRunner.csproj", "{DEDE38A2-435B-4D60-A083-B967B4A7E42E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode2023", "AdventOfCode2023\AdventOfCode2023.csproj", "{A92104AA-FDCD-40BA-BFC0-D3B6BE9DA7F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{DEDE38A2-435B-4D60-A083-B967B4A7E42E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEDE38A2-435B-4D60-A083-B967B4A7E42E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEDE38A2-435B-4D60-A083-B967B4A7E42E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A92104AA-FDCD-40BA-BFC0-D3B6BE9DA7F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A92104AA-FDCD-40BA-BFC0-D3B6BE9DA7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A92104AA-FDCD-40BA-BFC0-D3B6BE9DA7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A92104AA-FDCD-40BA-BFC0-D3B6BE9DA7F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
