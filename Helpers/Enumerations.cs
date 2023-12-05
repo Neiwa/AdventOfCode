@@ -12,10 +12,14 @@ namespace Helpers
         {
             return Range(start, v => v + increment, count);
         }
-
-        public static IEnumerable<T> Range<T>(T start, Func<T, T> increment, int count)
+        public static IEnumerable<long> Range(long start, long increment, long count)
         {
-            for (int i = 0; i < count; i++)
+            return Range(start, v => v + increment, count);
+        }
+
+        public static IEnumerable<T> Range<T>(T start, Func<T, T> increment, long count)
+        {
+            for (long i = 0; i < count; i++)
             {
                 yield return start;
                 start = increment(start);
