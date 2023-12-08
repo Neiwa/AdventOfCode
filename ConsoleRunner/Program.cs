@@ -67,7 +67,8 @@ namespace ConsoleRunner
                 new MenuChoice(1, "input.txt", ActionLevel.Info),
                 new MenuChoice(2, "input.txt", ActionLevel.Info),
                 new MenuChoice(1, null, ActionLevel.Trace),
-                new MenuChoice(2, null, ActionLevel.Trace)
+                new MenuChoice(2, null, ActionLevel.Trace),
+                new MenuChoice(-1, null, ActionLevel.Trace)
             };
         }
 
@@ -75,9 +76,9 @@ namespace ConsoleRunner
         {
             Year,
             Day,
-            Type,
             Part,
             Run,
+            ConfirmExit,
             Exit
         }
 
@@ -108,7 +109,7 @@ namespace ConsoleRunner
                 types[year][day].Add(type);
             }
 
-            var currentStep = Step.Day;
+            var currentStep = Step.Part;
             int yearChoice = types.Keys.Max();
             int dayChoice = types[yearChoice].Keys.Max();
             Type typeChoice = types[yearChoice][dayChoice].First();
@@ -116,8 +117,6 @@ namespace ConsoleRunner
             MenuChoice inputChoice = choices.First();
             while (currentStep != Step.Exit)
             {
-                currentStep++;
-
                 switch (currentStep)
                 {
                     case Step.Year:
@@ -126,8 +125,14 @@ namespace ConsoleRunner
                             {
                                 yearChoice = AnsiConsole.Prompt(new SelectionPrompt<int>()
                                     .Title("Select year")
-                                    .AddChoices(types.Keys.OrderByDescending(k => k)));
+                                    .AddChoices(types.Keys.OrderByDescending(k => k))
+                                    );
                             }
+                            else
+                            {
+                                yearChoice = types.Keys.Max();
+                            }
+                            currentStep++;
                             break;
                         }
                     case Step.Day:
@@ -137,27 +142,60 @@ namespace ConsoleRunner
                                 dayChoice = AnsiConsole.Prompt(new SelectionPrompt<int>()
                                         .Title($"[bold green]{yearChoice}[/] - Select day")
                                         .PageSize(10)
-                                        .AddChoices(types[yearChoice].Keys.OrderByDescending(k => k)));
+                                        .AddChoices(types[yearChoice].Keys.OrderByDescending(k => k)
+                                            .Append(-1))
+                                        .UseConverter(v => v == -1 ? "Back" : v.ToString())
+                                        );
+
+                                if (dayChoice == -1)
+                                {
+                                    currentStep--;
+                                }
+                                else
+                                {
+                                    currentStep++;
+                                }
                             }
-                            break;
-                        }
-                    case Step.Type:
-                        {
-                            if (types[yearChoice][dayChoice].Count > 1)
+                            else
                             {
-                                typeChoice = AnsiConsole.Prompt(new SelectionPrompt<Type>()
-                                    .Title($"[bold green]{yearChoice}-{dayChoice}[/] - Select type")
-                                    .AddChoices(types[yearChoice][dayChoice])
-                                    .UseConverter(t => t.Name));
+                                dayChoice = types[yearChoice].Keys.Max();
+                                currentStep++;
                             }
                             break;
                         }
                     case Step.Part:
                         {
+                            if (types[yearChoice][dayChoice].Count > 1)
+                            {
+                                typeChoice = AnsiConsole.Prompt(new SelectionPrompt<Type>()
+                                    .Title($"[bold green]{yearChoice}-{dayChoice}[/] - Select type")
+                                    .AddChoices(types[yearChoice][dayChoice].Append(typeof(int)))
+                                    .UseConverter(t => t == typeof(int) ? "Back" : t.Name));
+
+                                if (typeChoice == typeof(int))
+                                {
+                                    currentStep--;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                typeChoice = types[yearChoice][dayChoice].First();
+                            }
+
                             inputChoice = AnsiConsole.Prompt(new SelectionPrompt<MenuChoice>()
                                 .Title($"[bold green]{yearChoice}-{dayChoice}[/] ({typeChoice.Name}) - Select part")
                                 .AddChoices(choices)
-                                .UseConverter(c => c.GetFormatted()));
+                                .UseConverter(c => c.Part == -1 ? "Back" : c.GetFormatted()));
+
+                            if (inputChoice.Part == -1)
+                            {
+                                currentStep--;
+                            }
+                            else
+                            {
+                                currentStep++;
+                            }
                             break;
                         }
                     case Step.Run:
@@ -202,13 +240,19 @@ namespace ConsoleRunner
                             {
                                 AnsiConsole.WriteLine("[bold red underline]Failed to instanciate class[/]");
                             }
+
+                            currentStep++;
                             break;
                         }
                     default:
                         {
-                            if(!AnsiConsole.Confirm("Exit?"))
+                            if(AnsiConsole.Confirm("Exit?"))
                             {
-                                currentStep = Step.Day;
+                                currentStep++;
+                            }
+                            else
+                            {
+                                currentStep = Step.Part;
                             }
                             break;
                         }
