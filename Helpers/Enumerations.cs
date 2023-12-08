@@ -44,5 +44,18 @@ namespace Helpers
                 yield return nSubSet;
             }
         }
+
+        public static IEnumerable<char> CircularCharFeed(string input)
+        {
+            int pos = 0;
+            while (true)
+            {
+                yield return input[pos++];
+                if(pos == input.Length)
+                {
+                    pos = 0;
+                }
+            }
+        }
     }
 }

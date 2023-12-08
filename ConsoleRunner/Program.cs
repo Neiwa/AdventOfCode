@@ -71,6 +71,16 @@ namespace ConsoleRunner
             };
         }
 
+        enum Step
+        {
+            Year,
+            Day,
+            Type,
+            Part,
+            Run,
+            Exit
+        }
+
         static void Main(string[] args)
         {
             var options = CommandLine.Parser.Default.ParseArguments<Options>(args).Value;
@@ -98,82 +108,112 @@ namespace ConsoleRunner
                 types[year][day].Add(type);
             }
 
-            do
+            var currentStep = Step.Day;
+            int yearChoice = types.Keys.Max();
+            int dayChoice = types[yearChoice].Keys.Max();
+            Type typeChoice = types[yearChoice][dayChoice].First();
+            var choices = GenerateChoices();
+            MenuChoice inputChoice = choices.First();
+            while (currentStep != Step.Exit)
             {
-                int yearChoice = types.Keys.Max();
-                if (types.Count() > 1)
+                currentStep++;
+
+                switch (currentStep)
                 {
-                    yearChoice = AnsiConsole.Prompt(new SelectionPrompt<int>()
-                        .Title("Select year")
-                        .AddChoices(types.Keys.OrderByDescending(k => k)));
-                }
-
-                int dayChoice = types[yearChoice].Keys.Max();
-                if (types[yearChoice].Count() > 1)
-                {
-                    dayChoice = AnsiConsole.Prompt(new SelectionPrompt<int>()
-                            .Title($"[bold green]{yearChoice}[/] - Select day")
-                            .PageSize(10)
-                            .AddChoices(types[yearChoice].Keys.OrderByDescending(k => k)));
-                }
-                Type typeChoice = types[yearChoice][dayChoice].First();
-                if (types[yearChoice][dayChoice].Count > 1)
-                {
-                    typeChoice = AnsiConsole.Prompt(new SelectionPrompt<Type>()
-                        .Title($"[bold green]{yearChoice}-{dayChoice}[/] - Select type")
-                        .AddChoices(types[yearChoice][dayChoice])
-                        .UseConverter(t => t.Name));
-                }
-
-                var choices = GenerateChoices();
-                var inputChoice = AnsiConsole.Prompt(new SelectionPrompt<MenuChoice>()
-                    .Title($"[bold green]{yearChoice}-{dayChoice}[/] ({typeChoice.Name}) - Select part")
-                    .AddChoices(choices)
-                    .UseConverter(c => c.GetFormatted()));
-
-                while (string.IsNullOrEmpty(inputChoice.FileName))
-                {
-                    inputChoice.FileName = AnsiConsole.Ask<string>("Enter path to file:");
-                }
-
-                IBaseAoc? instance = Activator.CreateInstance(typeChoice) as IBaseAoc;
-
-                var sw = new Stopwatch();
-
-                if (instance != null)
-                {
-                    instance.Writing += Instance_Writing;
-
-                    AnsiConsole.MarkupLine($"[bold green]{yearChoice}-{dayChoice}[/] ({instance.GetType().Name})");
-                    AnsiConsole.MarkupLine(inputChoice.GetFormatted());
-
-                    sw.Start();
-                    try
-                    {
-                        if (inputChoice.Part == 1)
+                    case Step.Year:
                         {
-                            instance.PartOneTest(inputChoice.FileName, inputChoice.Level);
+                            if (types.Count() > 1)
+                            {
+                                yearChoice = AnsiConsole.Prompt(new SelectionPrompt<int>()
+                                    .Title("Select year")
+                                    .AddChoices(types.Keys.OrderByDescending(k => k)));
+                            }
+                            break;
                         }
-                        else
+                    case Step.Day:
                         {
-                            instance.PartTwoTest(inputChoice.FileName, inputChoice.Level);
+                            if (types[yearChoice].Count() > 1)
+                            {
+                                dayChoice = AnsiConsole.Prompt(new SelectionPrompt<int>()
+                                        .Title($"[bold green]{yearChoice}[/] - Select day")
+                                        .PageSize(10)
+                                        .AddChoices(types[yearChoice].Keys.OrderByDescending(k => k)));
+                            }
+                            break;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        AnsiConsole.WriteException(ex);
-                    }
+                    case Step.Type:
+                        {
+                            if (types[yearChoice][dayChoice].Count > 1)
+                            {
+                                typeChoice = AnsiConsole.Prompt(new SelectionPrompt<Type>()
+                                    .Title($"[bold green]{yearChoice}-{dayChoice}[/] - Select type")
+                                    .AddChoices(types[yearChoice][dayChoice])
+                                    .UseConverter(t => t.Name));
+                            }
+                            break;
+                        }
+                    case Step.Part:
+                        {
+                            inputChoice = AnsiConsole.Prompt(new SelectionPrompt<MenuChoice>()
+                                .Title($"[bold green]{yearChoice}-{dayChoice}[/] ({typeChoice.Name}) - Select part")
+                                .AddChoices(choices)
+                                .UseConverter(c => c.GetFormatted()));
+                            break;
+                        }
+                    case Step.Run:
+                        {
+                            while (string.IsNullOrEmpty(inputChoice.FileName))
+                            {
+                                inputChoice.FileName = AnsiConsole.Ask<string>("Enter path to file:");
+                            }
 
-                    sw.Stop();
-                    AnsiConsole.MarkupLine($"Run time: {sw.Elapsed}");
+                            IBaseAoc? instance = Activator.CreateInstance(typeChoice) as IBaseAoc;
+
+                            var sw = new Stopwatch();
+
+                            if (instance != null)
+                            {
+                                instance.Writing += Instance_Writing;
+
+                                AnsiConsole.MarkupLine($"[bold green]{yearChoice}-{dayChoice}[/] ({instance.GetType().Name})");
+                                AnsiConsole.MarkupLine(inputChoice.GetFormatted());
+
+                                sw.Start();
+                                try
+                                {
+                                    if (inputChoice.Part == 1)
+                                    {
+                                        instance.PartOneTest(inputChoice.FileName, inputChoice.Level);
+                                    }
+                                    else
+                                    {
+                                        instance.PartTwoTest(inputChoice.FileName, inputChoice.Level);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    AnsiConsole.WriteException(ex);
+                                }
+
+                                sw.Stop();
+                                AnsiConsole.MarkupLine($"Run time: {sw.Elapsed}");
+                            }
+                            else
+                            {
+                                AnsiConsole.WriteLine("[bold red underline]Failed to instanciate class[/]");
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            if(!AnsiConsole.Confirm("Exit?"))
+                            {
+                                currentStep = Step.Day;
+                            }
+                            break;
+                        }
                 }
-                else
-                {
-                    AnsiConsole.WriteLine("[bold red underline]Failed to instanciate class[/]");
-                }
-
-
-            } while (!AnsiConsole.Confirm("Exit?"));
+            }
         }
 
         private static void Instance_Writing(object? sender, WriteEventArgs e)
