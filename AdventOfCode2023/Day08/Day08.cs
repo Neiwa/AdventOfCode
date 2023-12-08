@@ -3,6 +3,8 @@ using Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -36,6 +38,27 @@ namespace AdventOfCode2023.Day08
 
             public int LoopingFrom { get; set; }
             public int LoopLength { get; set; }
+
+            private List<int>? _endPositions = null;
+
+            public List<int> EndPositions
+            {
+                get {
+                    if(_endPositions == null)
+                    {
+                        _endPositions = new List<int>();
+                        for (int i = LoopingFrom; i < History.Count; i++)
+                        {
+                            if (History[i].EndsWith("Z"))
+                            {
+                                _endPositions.Add(i);
+                            }
+                        }
+                    }
+
+                    return _endPositions;
+                }
+            }
 
             public Cursor(Node initialNode)
             {
@@ -95,9 +118,14 @@ namespace AdventOfCode2023.Day08
                         c.CurrentNode = nodes[c.CurrentNode.R];
                     }
 
-                    if (c.History.Count >= lines[0].Length)
+                    if (c.History.Count >= lines[0].Length - 1)
                     {
-                        for (var i = lines[0].Length; i < c.History.Count; i+= lines[0].Length)
+                        if (IsTrace)
+                        {
+                            WriteLine($"{string.Join(" ", c.History)} {c.CurrentNode.Name}", ActionLevel.Trace);
+                        }
+
+                        for (var i = lines[0].Length; i <= steps; i+= lines[0].Length)
                         {
                             var pos = steps - i;
                             var oldNode = c.History[pos];
@@ -114,25 +142,16 @@ namespace AdventOfCode2023.Day08
                     return c;
                 }).Where(c => !c.LoopDetected).ToList();
             }
-
+            long sum = lines[0].Length;
             foreach (var cur in loopingCurr)
             {
                 WriteLine($"{string.Join(" ", cur.History)}", ActionLevel.Trace);
-                WriteLine($"LoopFrom = {cur.LoopingFrom} LoopLength = {cur.LoopLength}");
+                WriteLine($"LoopFrom = {cur.LoopingFrom} LoopLength = {cur.LoopLength} ({cur.LoopLength / lines[0].Length})");
+                sum *= cur.LoopLength / lines[0].Length;
+                //WriteLine($"EndPositions = {string.Join(",", cur.EndPositions)}");
             }
 
-            var poss = loopingCurr.Select(c => c.LoopingFrom).ToList();
-            //while(true)
-            //{
-
-
-            //    if (poss.All(p => poss[0] == p))
-            //    {
-            //        break;
-            //    }
-            //}
-
-            return poss[0].ToString();
+            return sum.ToString();
         }
     }
 }
