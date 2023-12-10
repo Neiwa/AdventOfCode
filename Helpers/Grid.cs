@@ -136,41 +136,41 @@ namespace Helpers
 
         public Point Point => new(X, Y);
 
-        public IEnumerable<GridCellReference<TValue>> GetSurroundingCells()
+        public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false)
         {
-            var diffs = new List<Point> {
-                new Point(0, -1),
-                new Point(1, -1),
-                new Point(1, 0),
-                new Point(1, 1),
-                new Point(0, 1),
-                new Point(-1, 1),
-                new Point(-1, 0),
-                new Point(-1, -1),
-            };
-
-            foreach (var diff in diffs)
+            var shifts = new List<Point>();
+            if(includeDiagonal)
             {
-                var @ref = this + diff;
-                if(@ref.IsValid())
-                    yield return @ref;
+                shifts = new List<Point>
+                {
+                    new Point(0, -1),
+                    new Point(1, -1),
+                    new Point(1, 0),
+                    new Point(1, 1),
+                    new Point(0, 1),
+                    new Point(-1, 1),
+                    new Point(-1, 0),
+                    new Point(-1, -1),
+                };
             }
-        }
-
-        public IEnumerable<GridCellReference<TValue>> GetConnectedCells()
-        {
-            var diffs = new List<Point> {
-                new Point(0, -1),
-                new Point(1, 0),
-                new Point(0, 1),
-                new Point(-1, 0)
-            };
-
-            foreach (var diff in diffs)
+            else
             {
-                var @ref = this + diff;
+                shifts = new List<Point>
+                {
+                    new Point(0, -1),
+                    new Point(1, 0),
+                    new Point(0, 1),
+                    new Point(-1, 0)
+                };
+            }
+
+            foreach (var shift in shifts)
+            {
+                var @ref = this + shift;
                 if (@ref.IsValid())
+                {
                     yield return @ref;
+                }
             }
         }
 

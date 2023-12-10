@@ -91,12 +91,12 @@ namespace AdventOfCode2023.Day10
         {
             var startPos = input.First(c => c.Value == 'S');
             var currPos = startPos;
-            var lastPos = startPos.GetConnectedCells().First();
+            var lastPos = startPos.GetNeighbours().First();
             var length = 0;
 
             do
             {
-                foreach (var pos in currPos.GetConnectedCells())
+                foreach (var pos in currPos.GetNeighbours())
                 {
                     if (pos == lastPos) continue;
 
@@ -129,12 +129,12 @@ namespace AdventOfCode2023.Day10
 
             var startPos = input.First(c => c.Value == 'S');
             var currPos = startPos;
-            var lastPos = startPos.GetConnectedCells().First();
+            var lastPos = startPos.GetNeighbours().First();
             var length = 0;
 
             do
             {
-                foreach (var pos in currPos.GetConnectedCells())
+                foreach (var pos in currPos.GetNeighbours())
                 {
                     if (pos == lastPos) continue;
 
@@ -185,7 +185,7 @@ namespace AdventOfCode2023.Day10
                         cleanMap.At(fillPos.Point / 3).Value = 'W';
                     }
                 }
-                foreach (var pos in fillPos.GetConnectedCells())
+                foreach (var pos in fillPos.GetNeighbours())
                 {
                     if(pos.Value == '.')
                     {
