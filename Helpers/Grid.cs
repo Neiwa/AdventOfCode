@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,13 +14,18 @@ namespace Helpers
         }
     }
 
-    public class Grid<TValue>
+    public class Grid<TValue> : IEnumerable<GridCellReference<TValue>>
     {
         private TValue[][] _grid;
+
+        public int Height { get; init; }
+        public int Width { get; init; }
 
         public Grid(TValue[][] values)
         {
             _grid = values;
+            Height = _grid.Length;
+            Width = _grid[0].Length;
         }
 
         public GridRowReference<TValue> this[int index]
@@ -30,9 +36,25 @@ namespace Helpers
             }
         }
 
-        public TValue At(int x, int y)
+        public TValue ValueAt(int x, int y)
         {
-            return _grid[x][y];
+            return _grid[y][x];
+        }
+
+        public IEnumerator<GridCellReference<TValue>> GetEnumerator()
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    yield return new GridCellReference<TValue>(this, x, y);
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 
@@ -76,9 +98,65 @@ namespace Helpers
             Y = point.Y;
         }
 
-        public TValue Value => _grid.At(X, Y);
+        public TValue Value => _grid.ValueAt(X, Y);
 
         public Point Point => new(X, Y);
+
+        public IEnumerable<GridCellReference<TValue>> GetSurroundingCells()
+        {
+            var diffs = new List<Point> {
+                new Point(0, -1),
+                new Point(1, -1),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(0, 1),
+                new Point(-1, 1),
+                new Point(-1, 0),
+                new Point(-1, -1),
+            };
+
+            foreach (var diff in diffs)
+            {
+                var @ref = this + diff;
+                if(@ref.IsValid())
+                    yield return @ref;
+            }
+        }
+
+        public IEnumerable<GridCellReference<TValue>> GetConnectedCells()
+        {
+            var diffs = new List<Point> {
+                new Point(0, -1),
+                new Point(1, 0),
+                new Point(0, 1),
+                new Point(-1, 0)
+            };
+
+            foreach (var diff in diffs)
+            {
+                var @ref = this + diff;
+                if (@ref.IsValid())
+                    yield return @ref;
+            }
+        }
+
+        public bool IsValid()
+        {
+            if(X < 0 || Y < 0) return false;
+            if(X + 1 > _grid.Width) return false;
+            if(Y + 1 > _grid.Height) return false;
+            return true;
+        }
+
+        public static GridCellReference<TValue> operator +(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        {
+            return new GridCellReference<TValue>(left._grid, left.Point + right.Point);
+        }
+
+        public static GridCellReference<TValue> operator -(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        {
+            return new GridCellReference<TValue>(left._grid, left.Point - right.Point);
+        }
 
         public static GridCellReference<TValue> operator +(GridCellReference<TValue> left, Point right)
         { 
@@ -88,6 +166,16 @@ namespace Helpers
         public static GridCellReference<TValue> operator -(GridCellReference<TValue> left, Point right)
         {
             return new GridCellReference<TValue>(left._grid, left.Point - right);
+        }
+
+        public static bool operator ==(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        {
+            return left.Point == right.Point && left._grid == right._grid;
+        }
+
+        public static bool operator !=(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        {
+            return left.Point != right.Point || left._grid != right._grid;
         }
 
         public static bool operator ==(GridCellReference<TValue> left, Point right)
