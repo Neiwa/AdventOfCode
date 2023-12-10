@@ -80,6 +80,7 @@ namespace Core
 
         protected virtual List<string> GetInput(string fileName = "input.txt")
         {
+            var folder = GetType().Namespace.Substring(0, GetType().Namespace.IndexOf('.'));
             var name = GetType().Name;
 
             var attr = GetType().GetCustomAttribute<TestFixtureAttribute>();
@@ -91,7 +92,7 @@ namespace Core
                 }
             }
 
-            return File.ReadAllLines(Path.Join(TestContext.CurrentContext.TestDirectory, name, fileName)).ToList();
+            return File.ReadAllLines(Path.Join(TestContext.CurrentContext.TestDirectory, folder, name, fileName)).ToList();
         }
 
         protected virtual void WriteLine(string value, ActionLevel level = ActionLevel.Debug, int indent = 0, bool force = false)
