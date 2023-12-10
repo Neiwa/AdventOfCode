@@ -12,6 +12,10 @@ namespace Helpers
         public Grid(char[][] values) : base(values)
         {
         }
+
+        public Grid(int width, int height, char value) : base(width, height, value)
+        {
+        }
     }
 
     public class Grid<TValue> : IEnumerable<GridCellReference<TValue>>
@@ -28,6 +32,14 @@ namespace Helpers
             Width = _grid[0].Length;
         }
 
+        public Grid(int width, int height, TValue value)
+        {
+            Width = width;
+            Height = height;
+
+            _grid = Enumerable.Repeat(0, height).Select(_ => Enumerable.Repeat(value, width).ToArray()).ToArray();
+        }
+
         public GridRowReference<TValue> this[int index]
         {
             get
@@ -39,6 +51,21 @@ namespace Helpers
         public TValue ValueAt(int x, int y)
         {
             return _grid[y][x];
+        }
+
+        public void SetAt(int x, int y, TValue value)
+        {
+            _grid[y][x] = value;
+        }
+
+        public GridCellReference<TValue> At(int x, int y)
+        {
+            return new GridCellReference<TValue>(this, x, y);
+        }
+
+        public GridCellReference<TValue> At(Point point)
+        {
+            return new GridCellReference<TValue>(this, point);
         }
 
         public IEnumerator<GridCellReference<TValue>> GetEnumerator()
@@ -98,7 +125,14 @@ namespace Helpers
             Y = point.Y;
         }
 
-        public TValue Value => _grid.ValueAt(X, Y);
+        public TValue Value
+        {
+            get => _grid.ValueAt(X, Y);
+            set
+            {
+                _grid.SetAt(X, Y, value);
+            }
+        }
 
         public Point Point => new(X, Y);
 

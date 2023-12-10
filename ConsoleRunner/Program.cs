@@ -200,9 +200,10 @@ namespace ConsoleRunner
                         }
                     case Step.Run:
                         {
-                            while (string.IsNullOrEmpty(inputChoice.FileName))
+                            var fileName = inputChoice.FileName;
+                            while (string.IsNullOrEmpty(fileName))
                             {
-                                inputChoice.FileName = AnsiConsole.Ask<string>("Enter path to file:");
+                                fileName = AnsiConsole.Ask<string>("Enter path to file:");
                             }
 
                             IBaseAoc? instance = Activator.CreateInstance(typeChoice) as IBaseAoc;
@@ -221,11 +222,11 @@ namespace ConsoleRunner
                                 {
                                     if (inputChoice.Part == 1)
                                     {
-                                        instance.PartOneTest(inputChoice.FileName, inputChoice.Level);
+                                        instance.PartOneTest(fileName, inputChoice.Level);
                                     }
                                     else
                                     {
-                                        instance.PartTwoTest(inputChoice.FileName, inputChoice.Level);
+                                        instance.PartTwoTest(fileName, inputChoice.Level);
                                     }
                                 }
                                 catch (Exception ex)

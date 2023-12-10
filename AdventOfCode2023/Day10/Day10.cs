@@ -66,7 +66,7 @@ namespace AdventOfCode2023.Day10
             return false;
         }
 
-        public void Draw(Grid map, GridCellReference<char> pos)
+        public void Draw(Grid map, Point? pos = null)
         {
             if(!IsTrace) { return; }
 
@@ -74,7 +74,7 @@ namespace AdventOfCode2023.Day10
             {
                 for (global::System.Int32 x = 0; x < map.Width; x++)
                 {
-                    if (pos.X == x && pos.Y == y)
+                    if (pos is not null && pos.X == x && pos.Y == y)
                     {
                         Write('O');
                     }
@@ -105,7 +105,7 @@ namespace AdventOfCode2023.Day10
                         lastPos = currPos;
                         currPos = pos;
                         length++;
-                        Draw(input, currPos);
+                        Draw(input, currPos.Point);
                         break;
                     }
                 }
@@ -116,7 +116,87 @@ namespace AdventOfCode2023.Day10
 
         public override string PartTwo(Grid input)
         {
-            throw new NotImplementedException();
+            // Plot real map
+
+            // Explode map, i.e. start in top left, expand each to 3x3, so
+            // F becomes ...
+            //           .F-
+            //           .|.
+            // and so on
+
+            var realMap = new Grid(input.Width*3, input.Height*3, '.');
+            var cleanMap = new Grid(input.Width, input.Height, '.');
+
+            var startPos = input.First(c => c.Value == 'S');
+            var currPos = startPos;
+            var lastPos = startPos.GetConnectedCells().First();
+            var length = 0;
+
+            do
+            {
+                foreach (var pos in currPos.GetConnectedCells())
+                {
+                    if (pos == lastPos) continue;
+
+                    if (Connected(pos, currPos))
+                    {
+                        var conf = GetPipeConfig(pos.Value);
+                        var realMapPos = realMap.At(pos.Point * 3 + new Point(1, 1));
+                        realMapPos.Value = pos.Value;
+                        if (conf[0]) (realMapPos + new Point(0, -1)).Value = '|';
+                        if (conf[1]) (realMapPos + new Point(1, 0)).Value = '-';
+                        if (conf[2]) (realMapPos + new Point(0, 1)).Value = '|';
+                        if (conf[3]) (realMapPos + new Point(-1, 0)).Value = '-';
+                        //Draw(realMap, realMapPos.Point);
+
+                        cleanMap.At(pos.Point).Value = pos.Value;
+
+                        lastPos = currPos;
+                        currPos = pos;
+                        length++;
+                        //Draw(input, currPos.Point);
+                        break;
+                    }
+                }
+            } while (startPos != currPos);
+
+            Draw(realMap);
+            Draw(cleanMap);
+            // Flood map
+            // choose a . in edge and flood from there (replace . with W). Collapse map and count remaining .
+            // Collapse, keep only center of every expanded node
+
+            HashSet<Point> fillPoints = new HashSet<Point>
+            {
+                new Point(0, 0)
+            };
+
+            while(fillPoints.Any())
+            {
+                var fillPoint = fillPoints.First();
+                fillPoints.Remove(fillPoint);
+                var fillPos = realMap.At(fillPoint);
+
+                if (fillPos.Value == '.')
+                {
+                    fillPos.Value = 'W';
+                    if(fillPos.X % 3 == 1 && fillPos.Y % 3 == 1)
+                    {
+                        cleanMap.At(fillPos.Point / 3).Value = 'W';
+                    }
+                }
+                foreach (var pos in fillPos.GetConnectedCells())
+                {
+                    if(pos.Value == '.')
+                    {
+                        fillPoints.Add(pos.Point);
+                    }
+                }
+            }
+            Draw(realMap);
+            Draw(cleanMap);
+
+            return cleanMap.Count(c => c.Value == '.').ToString();
         }
 
         protected override Grid ParseInput(List<string> lines)
