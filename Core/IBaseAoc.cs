@@ -8,5 +8,7 @@
 
         void PartOneTest(string fileName, ActionLevel level);
         void PartTwoTest(string fileName, ActionLevel level);
+
+        string? SessionCookie { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Core
 {
@@ -39,6 +39,11 @@ namespace Core
         public BaseAoc()
         {
             Out = Console.Out;
+        }
+        public BaseAoc(string sessionCookie)
+        {
+            Out = Console.Out;
+            SessionCookie = sessionCookie;
         }
 
         [SetUp]
@@ -80,19 +85,34 @@ namespace Core
 
         protected virtual List<string> GetInput(string fileName = "input.txt")
         {
-            var folder = GetType().Namespace.Substring(0, GetType().Namespace.IndexOf('.'));
-            var name = GetType().Name;
+            var yearFolder = GetType().Namespace.Substring(0, GetType().Namespace.IndexOf('.'));
+            var dayFolder = GetType().Name;
 
             var attr = GetType().GetCustomAttribute<TestFixtureAttribute>();
             if (attr != null)
             {
                 if (!string.IsNullOrEmpty(attr.TestName))
                 {
-                    name = attr.TestName;
+                    dayFolder = attr.TestName;
                 }
             }
 
-            return File.ReadAllLines(Path.Join(TestContext.CurrentContext.TestDirectory, folder, name, fileName)).ToList();
+
+            string filePath = Path.Join(TestContext.CurrentContext.TestDirectory, yearFolder, dayFolder, fileName);
+
+            if (!File.Exists(filePath) && fileName == "input.txt" && !string.IsNullOrEmpty(SessionCookie))
+            {
+                string year = Regex.Match(yearFolder, @"(\d{4})").Value;
+                string day = Regex.Match(dayFolder, @"(\d{1,2})").Value.TrimStart('0');
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"https://adventofcode.com/{year}/day/{day}/input");
+                request.Headers.Add("Cookie", $"session={SessionCookie}");
+                using HttpClient httpClient = new HttpClient();
+                using var res = httpClient.Send(request).Content.ReadAsStream();
+                using var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
+                res.CopyTo(fs);
+            }
+
+            return File.ReadAllLines(filePath).ToList();
         }
 
         protected virtual void WriteLine(string value, ActionLevel level = ActionLevel.Debug, int indent = 0, bool force = false)
@@ -125,6 +145,7 @@ namespace Core
         }
 
         protected TInput Input { get; private set; }
+        public string? SessionCookie { get; set; }
 
         protected abstract TInput ParseInput(List<string> lines);
 

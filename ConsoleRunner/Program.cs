@@ -1,11 +1,9 @@
 ﻿using Core;
 using Helpers;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using Spectre.Console;
+using System.Diagnostics;
 using System.Text;
-using System;
+using System.Text.RegularExpressions;
 
 namespace ConsoleRunner
 {
@@ -86,7 +84,7 @@ namespace ConsoleRunner
         {
             var options = CommandLine.Parser.Default.ParseArguments<Options>(args).Value;
 
-            
+
             new AdventOfCode2022.ReferenceMe();
             new AdventOfCode2023.ReferenceMe();
 
@@ -212,6 +210,11 @@ namespace ConsoleRunner
 
                             if (instance != null)
                             {
+                                if (File.Exists("session.txt"))
+                                {
+                                    instance.SessionCookie = File.ReadAllText("session.txt");
+                                }
+
                                 instance.Writing += Instance_Writing;
 
                                 AnsiConsole.MarkupLine($"[bold green]{yearChoice}-{dayChoice}[/] ({instance.GetType().Name})");
@@ -247,7 +250,7 @@ namespace ConsoleRunner
                         }
                     default:
                         {
-                            if(AnsiConsole.Confirm("Exit?"))
+                            if (AnsiConsole.Confirm("Exit?"))
                             {
                                 currentStep++;
                             }
