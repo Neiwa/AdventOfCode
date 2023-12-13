@@ -127,7 +127,99 @@ namespace AdventOfCode2023.Day13
 
         public override string PartTwo(List<string> lines)
         {
-            throw new NotImplementedException();
+            var grids = new List<Grid>();
+            var start = 0;
+
+            for (int i = 0; i <= lines.Count; i++)
+            {
+                if (i == lines.Count || string.IsNullOrEmpty(lines[i]))
+                {
+                    grids.Add(lines.Skip(start).Take(i - start).ToGrid());
+                    start = i + 1;
+                }
+            }
+
+            var sum = 0;
+
+            foreach (var grid in grids)
+            {
+                var reflectionFound = false;
+
+                // Horizontal reflection
+                for (int hPos = 1; hPos < grid.Height; hPos++)
+                {
+                    var errors = 0;
+
+                    var height = Math.Min(hPos, grid.Height - hPos);
+                    var bounds = new Rectangle(0, hPos - height, grid.Width, height);
+
+                    foreach (var cell in grid.Where(c => bounds.Contains(c)))
+                    {
+                        //  0
+                        //  1
+                        //  2 c
+                        //  3 
+                        // v4
+                        // ^5
+                        //  6 
+                        //  7 r
+
+                        var reflection = cell + new Point(0, (hPos - cell.Y) * 2 - 1);
+                        if (reflection.Value != cell.Value)
+                        {
+                            if (errors++ > 1) break;
+                        }
+                    }
+
+                    if (errors == 1)
+                    {
+                        Draw(grid, bounds, new Rectangle(0, hPos, grid.Width, height));
+                        reflectionFound = true;
+                        sum += hPos * 100;
+                        WriteLine($"Reflection between row {hPos - 1} and {hPos}");
+                        break;
+                    }
+                }
+
+                if (reflectionFound)
+                {
+                    continue;
+                }
+
+                // Vertical reflection
+                for (int vPos = 1; vPos < grid.Width; vPos++)
+                {
+                    var errors = 0;
+
+                    var width = Math.Min(vPos, grid.Width - vPos);
+                    var bounds = new Rectangle(vPos - width, 0, width, grid.Height);
+
+                    foreach (var cell in grid.Where(c => bounds.Contains(c)))
+                    {
+                        var reflection = cell + new Point((vPos - cell.X) * 2 - 1, 0);
+                        if (reflection.Value != cell.Value)
+                        {
+                            if (errors++ > 1) break;
+                        }
+                    }
+
+                    if (errors == 1)
+                    {
+                        Draw(grid, bounds, new Rectangle(vPos, 0, width, grid.Height));
+                        reflectionFound = true;
+                        sum += vPos;
+                        WriteLine($"Reflection between col {vPos - 1} and {vPos}");
+                        break;
+                    }
+                }
+
+                if (!reflectionFound)
+                {
+                    throw new Exception("Error, no reflection found in pattern");
+                }
+            }
+
+            return sum.ToString();
         }
     }
 }
