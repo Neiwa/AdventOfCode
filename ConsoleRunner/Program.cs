@@ -281,7 +281,7 @@ namespace ConsoleRunner
             }
             else
             {
-                AnsiConsole.Write(e.Value);
+                AnsiConsole.Markup(e.Value);
             }
         }
     }

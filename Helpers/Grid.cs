@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace Helpers
 {
@@ -139,7 +134,7 @@ namespace Helpers
         public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false)
         {
             var shifts = new List<Point>();
-            if(includeDiagonal)
+            if (includeDiagonal)
             {
                 shifts = new List<Point>
                 {
@@ -176,9 +171,9 @@ namespace Helpers
 
         public bool IsValid()
         {
-            if(X < 0 || Y < 0) return false;
-            if(X + 1 > _grid.Width) return false;
-            if(Y + 1 > _grid.Height) return false;
+            if (X < 0 || Y < 0) return false;
+            if (X + 1 > _grid.Width) return false;
+            if (Y + 1 > _grid.Height) return false;
             return true;
         }
 
@@ -193,7 +188,7 @@ namespace Helpers
         }
 
         public static GridCellReference<TValue> operator +(GridCellReference<TValue> left, Point right)
-        { 
+        {
             return new GridCellReference<TValue>(left._grid, left.Point + right);
         }
 
@@ -221,16 +216,18 @@ namespace Helpers
         {
             return left.Point != right;
         }
+
+        public static implicit operator Point(GridCellReference<TValue> p) => p.Point;
     }
 
     public static class GridExtensions
     {
         public static Grid ToGrid(this string[] lines)
-        {    
+        {
             return new Grid(lines.Select(l => l.ToArray()).ToArray());
         }
 
-        public static Grid ToGrid(this List<string> lines)
+        public static Grid ToGrid(this IEnumerable<string> lines)
         {
             return new Grid(lines.Select(l => l.ToArray()).ToArray());
         }
