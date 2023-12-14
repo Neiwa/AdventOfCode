@@ -11,11 +11,6 @@ namespace Helpers
         public Grid(int width, int height, char value) : base(width, height, value)
         {
         }
-
-        //public new Grid Clone()
-        //{
-        //    return (Grid)base.Clone();
-        //}
     }
 
     public class Grid<TValue> : IEnumerable<GridCellReference<TValue>>
@@ -72,7 +67,7 @@ namespace Helpers
         {
             if (direction.X == 0 ^ direction.Y != 0)
             {
-                throw new ArgumentException("Vertical directions not supported.");
+                throw new ArgumentException("Diagonal directions not supported.");
             }
 
             if (direction.X > 0)
