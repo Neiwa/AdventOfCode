@@ -11,6 +11,11 @@ namespace Helpers
         public Grid(int width, int height, char value) : base(width, height, value)
         {
         }
+
+        //public new Grid Clone()
+        //{
+        //    return (Grid)base.Clone();
+        //}
     }
 
     public class Grid<TValue> : IEnumerable<GridCellReference<TValue>>
@@ -63,6 +68,55 @@ namespace Helpers
             return new GridCellReference<TValue>(this, point);
         }
 
+        public IEnumerable<GridCellReference<TValue>> Iterate(Point direction)
+        {
+            if (direction.X == 0 ^ direction.Y != 0)
+            {
+                throw new ArgumentException("Vertical directions not supported.");
+            }
+
+            if (direction.X > 0)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    for (int x = 0; x < Width; x++)
+                    {
+                        yield return new GridCellReference<TValue>(this, x, y);
+                    }
+                }
+            }
+            else if (direction.X < 0)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    for (int x = Width - 1; x >= 0; x--)
+                    {
+                        yield return new GridCellReference<TValue>(this, x, y);
+                    }
+                }
+            }
+            else if (direction.Y > 0)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    for (int y = 0; y < Height; y++)
+                    {
+                        yield return new GridCellReference<TValue>(this, x, y);
+                    }
+                }
+            }
+            else if (direction.Y < 0)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    for (int y = Height - 1; y >= 0; y--)
+                    {
+                        yield return new GridCellReference<TValue>(this, x, y);
+                    }
+                }
+            }
+        }
+
         public IEnumerator<GridCellReference<TValue>> GetEnumerator()
         {
             for (int y = 0; y < Height; y++)
@@ -77,6 +131,11 @@ namespace Helpers
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public Grid<TValue> Clone()
+        {
+            return new Grid<TValue>(_grid.Select(r => (TValue[])r.Clone()).ToArray());
         }
     }
 
