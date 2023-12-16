@@ -27,12 +27,16 @@ namespace Helpers
             Width = _grid[0].Length;
         }
 
-        public Grid(int width, int height, TValue value)
+        public Grid(int width, int height, TValue value) : this(width, height, _ => value)
+        {
+        }
+
+        public Grid(int width, int height, Func<Point, TValue> valueFactory)
         {
             Width = width;
             Height = height;
 
-            _grid = Enumerable.Repeat(0, height).Select(_ => Enumerable.Repeat(value, width).ToArray()).ToArray();
+            _grid = Enumerable.Range(0, height).Select(y => Enumerable.Range(0, width).Select(x => valueFactory(new Point(x, y))).ToArray()).ToArray();
         }
 
         public GridRowReference<TValue> this[int index]

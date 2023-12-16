@@ -1,10 +1,5 @@
 ﻿using Core;
 using Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode2023.Day10
 {
@@ -68,7 +63,7 @@ namespace AdventOfCode2023.Day10
 
         public void Draw(Grid map, Point? pos = null)
         {
-            if(!IsTrace) { return; }
+            if (!IsTrace) { return; }
 
             for (int y = 0; y < map.Height; y++)
             {
@@ -124,7 +119,7 @@ namespace AdventOfCode2023.Day10
             //           .|.
             // and so on
 
-            var realMap = new Grid(input.Width*3, input.Height*3, '.');
+            var realMap = new Grid(input.Width * 3, input.Height * 3, '.');
             var cleanMap = new Grid(input.Width, input.Height, '.');
 
             var startPos = input.First(c => c.Value == 'S');
@@ -171,7 +166,7 @@ namespace AdventOfCode2023.Day10
                 new Point(0, 0)
             };
 
-            while(fillPoints.Any())
+            while (fillPoints.Any())
             {
                 var fillPoint = fillPoints.First();
                 fillPoints.Remove(fillPoint);
@@ -180,14 +175,14 @@ namespace AdventOfCode2023.Day10
                 if (fillPos.Value == '.')
                 {
                     fillPos.Value = 'W';
-                    if(fillPos.X % 3 == 1 && fillPos.Y % 3 == 1)
+                    if (fillPos.X % 3 == 1 && fillPos.Y % 3 == 1)
                     {
                         cleanMap.At(fillPos.Point / 3).Value = 'W';
                     }
                 }
                 foreach (var pos in fillPos.GetNeighbours())
                 {
-                    if(pos.Value == '.')
+                    if (pos.Value == '.')
                     {
                         fillPoints.Add(pos.Point);
                     }
