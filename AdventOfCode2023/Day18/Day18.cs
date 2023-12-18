@@ -6,7 +6,7 @@ namespace AdventOfCode2023.Day18
 {
     public class Day18 : BaseAocV2
     {
-        public record Instruction(Point Direction, int Steps, string Color);
+        public record Instruction(Point Direction, int Steps);
 
         public Instruction Parse(string line)
         {
@@ -21,7 +21,7 @@ namespace AdventOfCode2023.Day18
             };
             var steps = int.Parse(m.Groups["steps"].Value);
 
-            return new Instruction(direction, steps, m.Groups["color"].Value);
+            return new Instruction(direction, steps);
         }
 
         public Instruction ParsePartTwo(string line)
@@ -37,7 +37,7 @@ namespace AdventOfCode2023.Day18
             };
             var steps = Convert.ToInt32(m.Groups["steps"].Value, 16);
 
-            return new Instruction(direction, steps, "");
+            return new Instruction(direction, steps);
         }
 
         public void Draw(Grid grid)
@@ -119,42 +119,65 @@ namespace AdventOfCode2023.Day18
             return map.Count(c => c.Value == '#' || c.Value == '.').ToString();
         }
 
+        public record Line(Point Left, Point Right, Instruction Instruction);
+
         public override string PartTwo(List<string> lines)
         {
             var instructions = lines.Select(ParsePartTwo);
-            var sparseGrid = new HashSet<Point>();
+
             var currentPoint = new Point(0, 0);
+
+            var sparseGrid = new HashSet<Point>();
             sparseGrid.Add(currentPoint);
 
-            var topLeft = new Point(0, 0);
-            var bottomRight = new Point(0, 0);
+            var xLocations = new List<int> { 0 };
+            var yLocations = new List<int> { 0 };
 
             foreach (var instruction in instructions)
             {
                 currentPoint += instruction.Direction * instruction.Steps;
                 sparseGrid.Add(currentPoint);
-
-                if (instruction.Direction.X > 0 && bottomRight.X < currentPoint.X)
-                {
-                    bottomRight.X = currentPoint.X;
-                }
-                else if (instruction.Direction.X < 0 && topLeft.X > currentPoint.X)
-                {
-                    topLeft.X = currentPoint.X;
-                }
-                else if (instruction.Direction.Y < 0 && topLeft.Y > currentPoint.Y)
-                {
-                    topLeft.Y = currentPoint.Y;
-                }
-                else if (instruction.Direction.Y > 0 && bottomRight.Y < currentPoint.Y)
-                {
-                    bottomRight.Y = currentPoint.Y;
-                }
+                xLocations.Add(currentPoint.X + 1);
+                xLocations.Add(currentPoint.X - 1);
+                yLocations.Add(currentPoint.Y + 1);
+                yLocations.Add(currentPoint.Y - 1);
             }
 
-            var bounds = new Rectangle(topLeft, bottomRight);
+            var xOrder = sparseGrid.Select(p => p.X).Concat(xLocations).OrderBy(x => x).Distinct().ToList();
+            xOrder.Add(xOrder.Last() + 1);
+            var yOrder = sparseGrid.Select(p => p.Y).Concat(yLocations).OrderBy(y => y).Distinct().ToList();
+            yOrder.Add(yOrder.Last() + 1);
 
-            throw new NotImplementedException();
+            var compactMap = new Grid(xOrder.Count + 2, yOrder.Count + 2, '.');
+            var compactCurrent = new Point(0, 0);
+            foreach (var instruction in instructions)
+            {
+                var start = new Point(xOrder.IndexOf(compactCurrent.X), yOrder.IndexOf(compactCurrent.Y));
+                compactCurrent += instruction.Direction * instruction.Steps;
+                var end = new Point(xOrder.IndexOf(compactCurrent.X), yOrder.IndexOf(compactCurrent.Y));
+                do
+                {
+                    compactMap.At(start + new Point(1, 1)).Value = '#';
+                    start += instruction.Direction;
+                } while (start != end);
+            }
+
+            Draw(compactMap);
+
+            var floodStack = new Stack<GridCellReference<char>>();
+            floodStack.Push(compactMap.At(0, 0));
+            while (floodStack.Any())
+            {
+                var fill = floodStack.Pop();
+                fill.Value = 'O';
+                foreach (var neighbour in fill.GetNeighbours().Where(n => n.Value == '.'))
+                {
+                    floodStack.Push(neighbour);
+                }
+            }
+            Draw(compactMap);
+
+            return compactMap.Where(c => c.Value != 'O').Sum(c => (long)(xOrder[c.X] - xOrder[c.X - 1]) * (yOrder[c.Y] - yOrder[c.Y - 1])).ToString();
         }
     }
 }
