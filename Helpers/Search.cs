@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Helpers
+﻿namespace Helpers
 {
     public static class Search
     {
@@ -21,6 +15,11 @@ namespace Helpers
         /// <returns></returns>
         public static List<T> AStar<T>(T start, T goal, Func<T, int> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, int>? edgeWeight = null) where T : notnull
         {
+            return AStar(start, goal, h, compare, getNeighbors, edgeWeight);
+        }
+
+        public static List<T> AStar<T>(T start, Func<T, bool> goalReached, Func<T, int> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, int>? edgeWeight = null) where T : notnull
+        {
             if (edgeWeight == null)
             {
                 edgeWeight = (_, _) => 1;
@@ -33,7 +32,7 @@ namespace Helpers
 
             int getGScore(T pos)
             {
-                if(gScore.TryGetValue(pos, out var value))
+                if (gScore.TryGetValue(pos, out var value))
                 {
                     return value;
                 }
@@ -51,7 +50,7 @@ namespace Helpers
             while (openSet.Count > 0)
             {
                 var current = openSet.MinBy(n => getFScore(n));
-                if (compare(current, goal))
+                if (goalReached(current))
                 {
                     List<T> path = new() { current };
                     while (cameFrom.Keys.Any(n => compare(n, current)))

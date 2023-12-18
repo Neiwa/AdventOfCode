@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Helpers
+﻿namespace Helpers
 {
     public class Point
     {
@@ -36,7 +30,7 @@ namespace Helpers
 
         public static Point operator *(Point left, int right)
         {
-            return new Point(left.X*right, left.Y * right);
+            return new Point(left.X * right, left.Y * right);
         }
 
         public static Point operator /(Point left, int right)
@@ -61,6 +55,11 @@ namespace Helpers
         public override int GetHashCode()
         {
             return 31 * X + Y;
+        }
+
+        public override string ToString()
+        {
+            return $"Point ({X}, {Y})";
         }
     }
 }

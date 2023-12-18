@@ -289,5 +289,10 @@ namespace Helpers
         {
             return new Grid(lines.Select(l => l.ToArray()).ToArray());
         }
+
+        public static Grid<T> ToGrid<T>(this IEnumerable<string> lines, Func<char, T> transform)
+        {
+            return new Grid<T>(lines.Select(l => l.Select(transform).ToArray()).ToArray());
+        }
     }
 }
