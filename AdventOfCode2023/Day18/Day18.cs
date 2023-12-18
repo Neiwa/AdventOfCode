@@ -144,9 +144,7 @@ namespace AdventOfCode2023.Day18
             }
 
             var xOrder = sparseGrid.Select(p => p.X).Concat(xLocations).OrderBy(x => x).Distinct().ToList();
-            xOrder.Add(xOrder.Last() + 1);
             var yOrder = sparseGrid.Select(p => p.Y).Concat(yLocations).OrderBy(y => y).Distinct().ToList();
-            yOrder.Add(yOrder.Last() + 1);
 
             var compactMap = new Grid(xOrder.Count + 2, yOrder.Count + 2, '.');
             var compactCurrent = new Point(0, 0);
