@@ -1,37 +1,38 @@
 ﻿using System.Collections;
 
-namespace Helpers
+namespace Helpers.Grid
 {
-    public class Grid : Grid<char>
+
+    public class FixedGrid : FixedGrid<char>
     {
-        public Grid(char[][] values) : base(values)
+        public FixedGrid(char[][] values) : base(values)
         {
         }
 
-        public Grid(int width, int height, char value) : base(width, height, value)
+        public FixedGrid(int width, int height, char value) : base(width, height, value)
         {
         }
     }
 
-    public class Grid<TValue> : IEnumerable<GridCellReference<TValue>>
+    public class FixedGrid<TValue> : IEnumerable<FixedGridCellReference<TValue>>
     {
         private TValue[][] _grid;
 
         public int Height { get; init; }
         public int Width { get; init; }
 
-        public Grid(TValue[][] values)
+        public FixedGrid(TValue[][] values)
         {
             _grid = values;
             Height = _grid.Length;
             Width = _grid[0].Length;
         }
 
-        public Grid(int width, int height, TValue value) : this(width, height, _ => value)
+        public FixedGrid(int width, int height, TValue value) : this(width, height, _ => value)
         {
         }
 
-        public Grid(int width, int height, Func<Point, TValue> valueFactory)
+        public FixedGrid(int width, int height, Func<Point, TValue> valueFactory)
         {
             Width = width;
             Height = height;
@@ -39,11 +40,11 @@ namespace Helpers
             _grid = Enumerable.Range(0, height).Select(y => Enumerable.Range(0, width).Select(x => valueFactory(new Point(x, y))).ToArray()).ToArray();
         }
 
-        public GridRowReference<TValue> this[int index]
+        public FixedGridRowReference<TValue> this[int index]
         {
             get
             {
-                return new GridRowReference<TValue>(this, index);
+                return new FixedGridRowReference<TValue>(this, index);
             }
         }
 
@@ -57,17 +58,17 @@ namespace Helpers
             _grid[y][x] = value;
         }
 
-        public GridCellReference<TValue> At(int x, int y)
+        public FixedGridCellReference<TValue> At(int x, int y)
         {
-            return new GridCellReference<TValue>(this, x, y);
+            return new FixedGridCellReference<TValue>(this, x, y);
         }
 
-        public GridCellReference<TValue> At(Point point)
+        public FixedGridCellReference<TValue> At(Point point)
         {
-            return new GridCellReference<TValue>(this, point);
+            return new FixedGridCellReference<TValue>(this, point);
         }
 
-        public IEnumerable<GridCellReference<TValue>> Iterate(Point direction)
+        public IEnumerable<FixedGridCellReference<TValue>> Iterate(Point direction)
         {
             if (direction.X == 0 ^ direction.Y != 0)
             {
@@ -80,7 +81,7 @@ namespace Helpers
                 {
                     for (int x = 0; x < Width; x++)
                     {
-                        yield return new GridCellReference<TValue>(this, x, y);
+                        yield return new FixedGridCellReference<TValue>(this, x, y);
                     }
                 }
             }
@@ -90,7 +91,7 @@ namespace Helpers
                 {
                     for (int x = Width - 1; x >= 0; x--)
                     {
-                        yield return new GridCellReference<TValue>(this, x, y);
+                        yield return new FixedGridCellReference<TValue>(this, x, y);
                     }
                 }
             }
@@ -100,7 +101,7 @@ namespace Helpers
                 {
                     for (int y = 0; y < Height; y++)
                     {
-                        yield return new GridCellReference<TValue>(this, x, y);
+                        yield return new FixedGridCellReference<TValue>(this, x, y);
                     }
                 }
             }
@@ -110,19 +111,19 @@ namespace Helpers
                 {
                     for (int y = Height - 1; y >= 0; y--)
                     {
-                        yield return new GridCellReference<TValue>(this, x, y);
+                        yield return new FixedGridCellReference<TValue>(this, x, y);
                     }
                 }
             }
         }
 
-        public IEnumerator<GridCellReference<TValue>> GetEnumerator()
+        public IEnumerator<FixedGridCellReference<TValue>> GetEnumerator()
         {
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    yield return new GridCellReference<TValue>(this, x, y);
+                    yield return new FixedGridCellReference<TValue>(this, x, y);
                 }
             }
         }
@@ -132,46 +133,46 @@ namespace Helpers
             return GetEnumerator();
         }
 
-        public Grid<TValue> Clone()
+        public FixedGrid<TValue> Clone()
         {
-            return new Grid<TValue>(_grid.Select(r => (TValue[])r.Clone()).ToArray());
+            return new FixedGrid<TValue>(_grid.Select(r => (TValue[])r.Clone()).ToArray());
         }
     }
 
-    public class GridRowReference<TValue>
+    public class FixedGridRowReference<TValue>
     {
-        internal Grid<TValue> _grid;
+        internal FixedGrid<TValue> _grid;
         private int _row;
 
-        public GridRowReference(Grid<TValue> grid, int row)
+        public FixedGridRowReference(FixedGrid<TValue> grid, int row)
         {
             _grid = grid;
             _row = row;
         }
 
-        public GridCellReference<TValue> this[int index]
+        public FixedGridCellReference<TValue> this[int index]
         {
             get
             {
-                return new GridCellReference<TValue>(_grid, _row, index);
+                return new FixedGridCellReference<TValue>(_grid, _row, index);
             }
         }
     }
 
-    public class GridCellReference<TValue>
+    public class FixedGridCellReference<TValue>
     {
-        internal Grid<TValue> _grid;
+        internal FixedGrid<TValue> _grid;
 
         public int X { get; init; }
         public int Y { get; init; }
 
-        public GridCellReference(Grid<TValue> grid, int x, int y)
+        public FixedGridCellReference(FixedGrid<TValue> grid, int x, int y)
         {
             _grid = grid;
             X = x;
             Y = y;
         }
-        public GridCellReference(Grid<TValue> grid, Point point)
+        public FixedGridCellReference(FixedGrid<TValue> grid, Point point)
         {
             _grid = grid;
             X = point.X;
@@ -189,9 +190,9 @@ namespace Helpers
 
         public Point Point => new(X, Y);
 
-        public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false)
+        public IEnumerable<FixedGridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false)
         {
-            var shifts = new List<Point>();
+            List<Point>? shifts;
             if (includeDiagonal)
             {
                 shifts = new List<Point>
@@ -235,64 +236,46 @@ namespace Helpers
             return true;
         }
 
-        public static GridCellReference<TValue> operator +(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        public static FixedGridCellReference<TValue> operator +(FixedGridCellReference<TValue> left, FixedGridCellReference<TValue> right)
         {
-            return new GridCellReference<TValue>(left._grid, left.Point + right.Point);
+            return new FixedGridCellReference<TValue>(left._grid, left.Point + right.Point);
         }
 
-        public static GridCellReference<TValue> operator -(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        public static FixedGridCellReference<TValue> operator -(FixedGridCellReference<TValue> left, FixedGridCellReference<TValue> right)
         {
-            return new GridCellReference<TValue>(left._grid, left.Point - right.Point);
+            return new FixedGridCellReference<TValue>(left._grid, left.Point - right.Point);
         }
 
-        public static GridCellReference<TValue> operator +(GridCellReference<TValue> left, Point right)
+        public static FixedGridCellReference<TValue> operator +(FixedGridCellReference<TValue> left, Point right)
         {
-            return new GridCellReference<TValue>(left._grid, left.Point + right);
+            return new FixedGridCellReference<TValue>(left._grid, left.Point + right);
         }
 
-        public static GridCellReference<TValue> operator -(GridCellReference<TValue> left, Point right)
+        public static FixedGridCellReference<TValue> operator -(FixedGridCellReference<TValue> left, Point right)
         {
-            return new GridCellReference<TValue>(left._grid, left.Point - right);
+            return new FixedGridCellReference<TValue>(left._grid, left.Point - right);
         }
 
-        public static bool operator ==(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        public static bool operator ==(FixedGridCellReference<TValue> left, FixedGridCellReference<TValue> right)
         {
             return left.Point == right.Point && left._grid == right._grid;
         }
 
-        public static bool operator !=(GridCellReference<TValue> left, GridCellReference<TValue> right)
+        public static bool operator !=(FixedGridCellReference<TValue> left, FixedGridCellReference<TValue> right)
         {
             return left.Point != right.Point || left._grid != right._grid;
         }
 
-        public static bool operator ==(GridCellReference<TValue> left, Point right)
+        public static bool operator ==(FixedGridCellReference<TValue> left, Point right)
         {
             return left.Point == right;
         }
 
-        public static bool operator !=(GridCellReference<TValue> left, Point right)
+        public static bool operator !=(FixedGridCellReference<TValue> left, Point right)
         {
             return left.Point != right;
         }
 
-        public static implicit operator Point(GridCellReference<TValue> p) => p.Point;
-    }
-
-    public static class GridExtensions
-    {
-        public static Grid ToGrid(this string[] lines)
-        {
-            return new Grid(lines.Select(l => l.ToArray()).ToArray());
-        }
-
-        public static Grid ToGrid(this IEnumerable<string> lines)
-        {
-            return new Grid(lines.Select(l => l.ToArray()).ToArray());
-        }
-
-        public static Grid<T> ToGrid<T>(this IEnumerable<string> lines, Func<char, T> transform)
-        {
-            return new Grid<T>(lines.Select(l => l.Select(transform).ToArray()).ToArray());
-        }
+        public static implicit operator Point(FixedGridCellReference<TValue> p) => p.Point;
     }
 }

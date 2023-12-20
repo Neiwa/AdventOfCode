@@ -1,11 +1,12 @@
 ﻿using Core;
 using Helpers;
+using Helpers.Grid;
 
 namespace AdventOfCode2023.Day17
 {
-    public class Day17 : BaseAoc<Grid<int>>
+    public class Day17 : BaseAoc<FixedGrid<int>>
     {
-        public void Draw(Grid<int> grid, IList<State> path)
+        public void Draw(FixedGrid<int> grid, IList<State> path)
         {
             if (!IsDebug) return;
 
@@ -48,7 +49,7 @@ namespace AdventOfCode2023.Day17
 
         public record State(Point Position, Point Direction, int Length);
 
-        public override string PartOne(Grid<int> input)
+        public override string PartOne(FixedGrid<int> input)
         {
             var start = new State(input.At(0, 0), new Point(0, 1), 0);
             var goal = input.At(input.Width - 1, input.Height - 1);
@@ -84,7 +85,7 @@ namespace AdventOfCode2023.Day17
             return path.Skip(1).Sum(c => input.At(c.Position).Value).ToString();
         }
 
-        public override string PartTwo(Grid<int> input)
+        public override string PartTwo(FixedGrid<int> input)
         {
             var start = new State(input.At(0, 0), new Point(0, 1), 0);
             var goal = input.At(input.Width - 1, input.Height - 1);
@@ -136,7 +137,7 @@ namespace AdventOfCode2023.Day17
             return minHeatLoss.ToString();
         }
 
-        protected override Grid<int> ParseInput(List<string> lines)
+        protected override FixedGrid<int> ParseInput(List<string> lines)
         {
             return lines.ToGrid(c => c - 48);
         }

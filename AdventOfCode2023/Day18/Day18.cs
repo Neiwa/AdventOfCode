@@ -1,5 +1,6 @@
 ﻿using Core;
 using Helpers;
+using Helpers.Grid;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2023.Day18
@@ -40,7 +41,7 @@ namespace AdventOfCode2023.Day18
             return new Instruction(direction, steps);
         }
 
-        public void Draw(Grid grid)
+        public void Draw(FixedGrid grid)
         {
             if (!IsTrace) return;
 
@@ -94,7 +95,7 @@ namespace AdventOfCode2023.Day18
 
             var shift = new Point(1, 1) - topLeft;
 
-            var map = new Grid(bounds.Width + 2, bounds.Height + 2, '.');
+            var map = new FixedGrid(bounds.Width + 2, bounds.Height + 2, '.');
             foreach (var point in sparseGrid)
             {
                 map.At(point + shift).Value = '#';
@@ -102,7 +103,7 @@ namespace AdventOfCode2023.Day18
 
             Draw(map);
 
-            var floodStack = new Stack<GridCellReference<char>>();
+            var floodStack = new Stack<FixedGridCellReference<char>>();
             floodStack.Push(map.At(0, 0));
             while (floodStack.Any())
             {
@@ -146,7 +147,7 @@ namespace AdventOfCode2023.Day18
             var xOrder = sparseGrid.Select(p => p.X).Concat(xLocations).OrderBy(x => x).Distinct().ToList();
             var yOrder = sparseGrid.Select(p => p.Y).Concat(yLocations).OrderBy(y => y).Distinct().ToList();
 
-            var compactMap = new Grid(xOrder.Count + 2, yOrder.Count + 2, '.');
+            var compactMap = new FixedGrid(xOrder.Count + 2, yOrder.Count + 2, '.');
             var compactCurrent = new Point(0, 0);
             foreach (var instruction in instructions)
             {
@@ -162,7 +163,7 @@ namespace AdventOfCode2023.Day18
 
             Draw(compactMap);
 
-            var floodStack = new Stack<GridCellReference<char>>();
+            var floodStack = new Stack<FixedGridCellReference<char>>();
             floodStack.Push(compactMap.At(0, 0));
             while (floodStack.Any())
             {

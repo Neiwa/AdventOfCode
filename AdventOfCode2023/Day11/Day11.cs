@@ -1,5 +1,5 @@
 ﻿using Core;
-using Helpers;
+using Helpers.Grid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2023.Day11
 {
-    public class Day11 : BaseAoc<Grid>
+    public class Day11 : BaseAoc<FixedGrid>
     {
-        long GetDistance(Grid input, long age)
+        long GetDistance(FixedGrid input, long age)
         {
             var colWeights = Enumerable.Repeat(age, input.Width).ToList();
             var rowWeights = Enumerable.Repeat(age, input.Height).ToList();
@@ -33,17 +33,17 @@ namespace AdventOfCode2023.Day11
             return res;
         }
 
-        public override string PartOne(Grid input)
+        public override string PartOne(FixedGrid input)
         {
             return GetDistance(input, 2).ToString();
         }
 
-        public override string PartTwo(Grid input)
+        public override string PartTwo(FixedGrid input)
         {
             return GetDistance(input, 1_000_000).ToString();
         }
 
-        protected override Grid ParseInput(List<string> lines)
+        protected override FixedGrid ParseInput(List<string> lines)
         {
             return lines.ToGrid();
         }

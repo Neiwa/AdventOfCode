@@ -1,0 +1,77 @@
+﻿namespace Helpers.Grid
+{
+    public class SparseGrid : SparseGrid<char>
+    {
+        public SparseGrid(char defaultValue) : base(defaultValue)
+        {
+
+        }
+    }
+
+    public class SparseGrid<TValue> : Grid<TValue>
+    {
+        private Dictionary<LongPoint, TValue> _grid = new();
+        private long minX, minY, maxX, maxY;
+        private readonly Func<LongPoint, TValue> _valueFactory;
+
+        public override long Width => maxX - minX;
+        public override long Height => maxY - minY;
+
+        public SparseGrid(TValue defaultValue) : this(_ => defaultValue)
+        {
+        }
+
+        public SparseGrid(Func<LongPoint, TValue> valueFactory)
+        {
+            _valueFactory = valueFactory;
+        }
+
+        public override void SetAt(LongPoint pos, TValue value)
+        {
+            _grid[pos] = value;
+
+            if (minX > pos.X)
+            {
+                minX = pos.X;
+            }
+            else if (maxX < pos.X)
+            {
+                maxX = pos.X;
+            }
+
+            if (minY > pos.Y)
+            {
+                minY = pos.Y;
+            }
+            else if (maxY < pos.Y)
+            {
+                maxY = pos.Y;
+            }
+        }
+
+        public override TValue ValueAt(LongPoint pos)
+        {
+            if (_grid.TryGetValue(pos, out var value))
+            {
+                return value;
+            }
+            return _valueFactory(pos);
+        }
+
+        public override IEnumerator<GridCellReference<TValue>> GetEnumerator()
+        {
+            for (long y = minY; y < maxY; y++)
+            {
+                for (long x = minX; x < maxX; x++)
+                {
+                    yield return new GridCellReference<TValue>(this, x, y);
+                }
+            }
+        }
+
+        public override bool Valid(long x, long y)
+        {
+            return x >= minX && x <= maxX && y >= minY && y <= maxY;
+        }
+    }
+}

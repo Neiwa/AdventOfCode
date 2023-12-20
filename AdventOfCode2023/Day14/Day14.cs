@@ -1,11 +1,12 @@
 ﻿using Core;
 using Helpers;
+using Helpers.Grid;
 
 namespace AdventOfCode2023.Day14
 {
-    public class Day14 : BaseAoc<Grid>
+    public class Day14 : BaseAoc<FixedGrid>
     {
-        public void Draw(Grid<char> grid)
+        public void Draw(FixedGrid<char> grid)
         {
             if (!IsTrace) return;
 
@@ -19,7 +20,7 @@ namespace AdventOfCode2023.Day14
             }
         }
 
-        public override string PartOne(Grid input)
+        public override string PartOne(FixedGrid input)
         {
             var rocks = input.Where(c => c.Value == 'O');
 
@@ -44,7 +45,7 @@ namespace AdventOfCode2023.Day14
             return input.Where(c => c.Value == 'O').Sum(c => input.Height - c.Y).ToString();
         }
 
-        public override string PartTwo(Grid input)
+        public override string PartTwo(FixedGrid input)
         {
             var cycle = new List<Point>
             {
@@ -54,7 +55,7 @@ namespace AdventOfCode2023.Day14
                 new Point(1, 0)
             };
 
-            var historyStack = new List<Grid<char>>();
+            var historyStack = new List<FixedGrid<char>>();
 
             for (var i = 0; i < 1_000_000_000; i++)
             {
@@ -101,7 +102,7 @@ namespace AdventOfCode2023.Day14
             return input.Where(c => c.Value == 'O').Sum(c => input.Height - c.Y).ToString();
         }
 
-        protected override Grid ParseInput(List<string> lines)
+        protected override FixedGrid ParseInput(List<string> lines)
         {
             return lines.ToGrid();
         }

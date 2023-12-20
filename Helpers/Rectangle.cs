@@ -27,6 +27,35 @@
         public int Width { get; set; }
         public int Height { get; set; }
 
+        public int Left
+        {
+            get
+            {
+                return Position.X;
+            }
+        }
+        public int Right
+        {
+            get
+            {
+                return Position.X + Width;
+            }
+        }
+        public int Top
+        {
+            get
+            {
+                return Position.Y;
+            }
+        }
+        public int Bottom
+        {
+            get
+            {
+                return Position.Y + Height;
+            }
+        }
+
         public bool Contains(Point point)
         {
             return point.X >= Position.X &&

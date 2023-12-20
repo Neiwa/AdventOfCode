@@ -25,6 +25,10 @@
         {
             return new LongPoint(left.X + right.X, left.Y + right.Y);
         }
+        public static LongPoint operator -(LongPoint left, LongPoint right)
+        {
+            return new LongPoint(left.X - right.X, left.Y - right.Y);
+        }
         public static bool operator ==(LongPoint left, LongPoint right)
         {
             return left.Equals(right);
@@ -32,6 +36,16 @@
         public static bool operator !=(LongPoint left, LongPoint right)
         {
             return !left.Equals(right);
+        }
+
+        public static LongPoint operator *(LongPoint left, long right)
+        {
+            return new LongPoint(left.X * right, left.Y * right);
+        }
+
+        public static LongPoint operator /(LongPoint left, long right)
+        {
+            return new LongPoint(left.X / right, left.Y / right);
         }
 
         public override bool Equals(object? obj)
@@ -51,6 +65,11 @@
         public override int GetHashCode()
         {
             return (int)((31 * X + Y) % int.MaxValue);
+        }
+
+        public override string ToString()
+        {
+            return $"LongPoint ({X}, {Y})";
         }
     }
 }

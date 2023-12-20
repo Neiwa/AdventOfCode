@@ -1,11 +1,12 @@
 ﻿using Core;
 using Helpers;
+using Helpers.Grid;
 
 namespace AdventOfCode2023.Day13
 {
     public class Day13 : BaseAocV2
     {
-        public void Draw(Grid grid, Rectangle left, Rectangle reflection)
+        public void Draw(FixedGrid grid, Rectangle left, Rectangle reflection)
         {
             if (!IsTrace) return;
 
@@ -33,7 +34,7 @@ namespace AdventOfCode2023.Day13
 
         public override string PartOne(List<string> lines)
         {
-            var grids = new List<Grid>();
+            var grids = new List<FixedGrid>();
             var start = 0;
 
             for (int i = 0; i <= lines.Count; i++)
@@ -127,7 +128,7 @@ namespace AdventOfCode2023.Day13
 
         public override string PartTwo(List<string> lines)
         {
-            var grids = new List<Grid>();
+            var grids = new List<FixedGrid>();
             var start = 0;
 
             for (int i = 0; i <= lines.Count; i++)

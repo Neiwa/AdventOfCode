@@ -1,9 +1,10 @@
 ﻿using Core;
 using Helpers;
+using Helpers.Grid;
 
 namespace AdventOfCode2023.Day10
 {
-    public class Day10 : BaseAoc<Grid>
+    public class Day10 : BaseAoc<FixedGrid>
     {
         public bool[] GetPipeConfig(char p)
         {
@@ -28,7 +29,7 @@ namespace AdventOfCode2023.Day10
             }
         }
 
-        public bool Connected(GridCellReference<char> left, GridCellReference<char> right)
+        public bool Connected(FixedGridCellReference<char> left, FixedGridCellReference<char> right)
         {
             //   R
             // - L -
@@ -61,7 +62,7 @@ namespace AdventOfCode2023.Day10
             return false;
         }
 
-        public void Draw(Grid map, Point? pos = null)
+        public void Draw(FixedGrid map, Point? pos = null)
         {
             if (!IsTrace) { return; }
 
@@ -82,7 +83,7 @@ namespace AdventOfCode2023.Day10
             }
         }
 
-        public override string PartOne(Grid input)
+        public override string PartOne(FixedGrid input)
         {
             var startPos = input.First(c => c.Value == 'S');
             var currPos = startPos;
@@ -109,7 +110,7 @@ namespace AdventOfCode2023.Day10
             return (length / 2).ToString();
         }
 
-        public override string PartTwo(Grid input)
+        public override string PartTwo(FixedGrid input)
         {
             // Plot real map
 
@@ -119,8 +120,8 @@ namespace AdventOfCode2023.Day10
             //           .|.
             // and so on
 
-            var realMap = new Grid(input.Width * 3, input.Height * 3, '.');
-            var cleanMap = new Grid(input.Width, input.Height, '.');
+            var realMap = new FixedGrid(input.Width * 3, input.Height * 3, '.');
+            var cleanMap = new FixedGrid(input.Width, input.Height, '.');
 
             var startPos = input.First(c => c.Value == 'S');
             var currPos = startPos;
@@ -194,7 +195,7 @@ namespace AdventOfCode2023.Day10
             return cleanMap.Count(c => c.Value == '.').ToString();
         }
 
-        protected override Grid ParseInput(List<string> lines)
+        protected override FixedGrid ParseInput(List<string> lines)
         {
             return lines.ToGrid();
         }
