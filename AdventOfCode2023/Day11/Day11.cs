@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2023.Day11
 {
-    public class Day11 : BaseAoc<FixedGrid>
+    public class Day11 : BaseAoc<FixedIntGrid>
     {
-        long GetDistance(FixedGrid input, long age)
+        long GetDistance(FixedIntGrid input, long age)
         {
             var colWeights = Enumerable.Repeat(age, input.Width).ToList();
             var rowWeights = Enumerable.Repeat(age, input.Height).ToList();
@@ -33,19 +33,19 @@ namespace AdventOfCode2023.Day11
             return res;
         }
 
-        public override string PartOne(FixedGrid input)
+        public override string PartOne(FixedIntGrid input)
         {
             return GetDistance(input, 2).ToString();
         }
 
-        public override string PartTwo(FixedGrid input)
+        public override string PartTwo(FixedIntGrid input)
         {
             return GetDistance(input, 1_000_000).ToString();
         }
 
-        protected override FixedGrid ParseInput(List<string> lines)
+        protected override FixedIntGrid ParseInput(List<string> lines)
         {
-            return lines.ToGrid();
+            return lines.ToFixedIntGrid();
         }
     }
 }

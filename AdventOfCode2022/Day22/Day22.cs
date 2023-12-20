@@ -10,15 +10,15 @@ namespace AdventOfCode2022.Day22
 {
     public class Day22 : BaseAoc<Board>
     {
-        Dictionary<int, Point> facingToPoint = new()
+        Dictionary<int, IntPoint> facingToPoint = new()
         {
-            {0, new Point(1, 0) },
-            {1, new Point(0, 1) },
-            {2, new Point(-1, 0) },
-            {3, new Point(0, -1) }
+            {0, new IntPoint(1, 0) },
+            {1, new IntPoint(0, 1) },
+            {2, new IntPoint(-1, 0) },
+            {3, new IntPoint(0, -1) }
         };
 
-        public char GetChar(Point pos)
+        public char GetChar(IntPoint pos)
         {
             if (Input.Map.Count <= pos.Y || pos.Y < 0)
             {
@@ -32,7 +32,7 @@ namespace AdventOfCode2022.Day22
             return row[pos.X];
         }
 
-        public Point NextPos(Point pos, int facing)
+        public IntPoint NextPos(IntPoint pos, int facing)
         {
             switch (GetChar(pos + facingToPoint[facing]))
             {
@@ -55,9 +55,9 @@ namespace AdventOfCode2022.Day22
             return pos;
         }
 
-        public (Point NewPos, int NewFacing) NextPosCube(Point pos, int facing)
+        public (IntPoint NewPos, int NewFacing) NextPosCube(IntPoint pos, int facing)
         {
-            Point nextPos = pos + facingToPoint[facing];
+            IntPoint nextPos = pos + facingToPoint[facing];
             int nextFacing = facing;
 
             var posCubeIndex = Input.Cubes.FindIndex(cube => cube.Bounds.Contains(pos));
@@ -80,13 +80,13 @@ namespace AdventOfCode2022.Day22
             }
         }
 
-        void Draw(Point player, int facing)
+        void Draw(IntPoint player, int facing)
         {
             for (int y = 0; y < Input.Map.Count; y++)
             {
                 for (int x = 0; x < Input.Map[y].Length; x++)
                 {
-                    if (player == new Point(x, y))
+                    if (player == new IntPoint(x, y))
                     {
                         switch (facing)
                         {
@@ -116,7 +116,7 @@ namespace AdventOfCode2022.Day22
         public override string PartOne(Board board)
         {
             int facing = 0;
-            Point pos = new(Input.Map[0].IndexOf('.'), 0);
+            IntPoint pos = new(Input.Map[0].IndexOf('.'), 0);
 
             foreach (var instruction in board.Instructions)
             {
@@ -151,7 +151,7 @@ namespace AdventOfCode2022.Day22
         public override string PartTwo(Board input)
         {
             int facing = 0;
-            Point pos = new(Input.Map[0].IndexOf('.'), 0);
+            IntPoint pos = new(Input.Map[0].IndexOf('.'), 0);
 
             foreach (var instruction in Input.Instructions)
             {
@@ -266,11 +266,11 @@ namespace AdventOfCode2022.Day22
                         for (int s = 0; s < sides.Count; s++)
                         {
                             var side = sides[s];
-                            Dictionary<Point, (Point Dest, int Facing)> oobDict = new();
+                            Dictionary<IntPoint, (IntPoint Dest, int Facing)> oobDict = new();
                             for (int f = 0; f < 4; f++)
                             {
                                 var relation = cubeRelations[(s, f)];
-                                Point sourcePos = side.Position + f switch
+                                IntPoint sourcePos = side.Position + f switch
                                 {
                                     0 => facingToPoint[0] * side.Width,
                                     1 => facingToPoint[0] * (side.Width - 1) + facingToPoint[1] * side.Width,
@@ -278,17 +278,17 @@ namespace AdventOfCode2022.Day22
                                     3 => facingToPoint[3],
                                     _ => throw new ArgumentException()
                                 };
-                                Point sourceStep = facingToPoint[(f + 1) % 4];
+                                IntPoint sourceStep = facingToPoint[(f + 1) % 4];
 
-                                Point targetPos = sides[relation.Side].Position + relation.Corner switch
+                                IntPoint targetPos = sides[relation.Side].Position + relation.Corner switch
                                 {
                                     0 => facingToPoint[0] * (side.Width - 1),
                                     1 => facingToPoint[0] * (side.Width - 1) + facingToPoint[1] * (side.Width - 1),
                                     2 => facingToPoint[1] * (side.Width - 1),
-                                    3 => new Point(0, 0),
+                                    3 => new IntPoint(0, 0),
                                     _ => throw new ArgumentException()
                                 };
-                                Point targetStep = facingToPoint[relation.Direction];
+                                IntPoint targetStep = facingToPoint[relation.Direction];
 
                                 for (int i = 0; i < side.Width; i++)
                                 {
@@ -335,7 +335,7 @@ namespace AdventOfCode2022.Day22
         public List<string> Map { get; }
         public List<Instruction> Instructions { get; }
 
-        public List<(Rectangle Bounds, Dictionary<Point, (Point Dest, int Facing)> OutOfBoundsTranslation)> Cubes { get; set; } = new();
+        public List<(Rectangle Bounds, Dictionary<IntPoint, (IntPoint Dest, int Facing)> OutOfBoundsTranslation)> Cubes { get; set; } = new();
         public int CubeSize { get; set; }
     }
 }

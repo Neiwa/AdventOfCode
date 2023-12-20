@@ -4,18 +4,18 @@ using Helpers.Grid;
 
 namespace AdventOfCode2023.Day16
 {
-    public class Day16 : BaseAoc<FixedGrid>
+    public class Day16 : BaseAoc<FixedIntGrid>
     {
-        Point Left => new Point(-1, 0);
-        Point Right => new Point(1, 0);
-        Point Up => new Point(0, -1);
-        Point Down => new Point(0, 1);
+        IntPoint Left => new IntPoint(-1, 0);
+        IntPoint Right => new IntPoint(1, 0);
+        IntPoint Up => new IntPoint(0, -1);
+        IntPoint Down => new IntPoint(0, 1);
 
-        public int CalculateEnergy(Point startDirection, Point startLocation, FixedGrid grid)
+        public int CalculateEnergy(IntPoint startDirection, IntPoint startLocation, FixedIntGrid grid)
         {
-            var lightMovement = new FixedGrid<HashSet<Point>>(grid.Width, grid.Height, _ => new HashSet<Point>());
+            var lightMovement = new FixedIntGrid<HashSet<IntPoint>>(grid.Width, grid.Height, _ => new HashSet<IntPoint>());
 
-            var lightStack = new Stack<(Point Direction, FixedGridCellReference<char> Location)>();
+            var lightStack = new Stack<(IntPoint Direction, FixedIntGridCellReference<char> Location)>();
             lightStack.Push((startDirection, grid.At(startLocation)));
 
             do
@@ -101,24 +101,24 @@ namespace AdventOfCode2023.Day16
             return lightMovement.Count(c => c.Value.Count > 0);
         }
 
-        public override string PartOne(FixedGrid input)
+        public override string PartOne(FixedIntGrid input)
         {
-            return CalculateEnergy(new Point(1, 0), new Point(0, 0), input).ToString();
+            return CalculateEnergy(new IntPoint(1, 0), new IntPoint(0, 0), input).ToString();
         }
 
-        public override string PartTwo(FixedGrid input)
+        public override string PartTwo(FixedIntGrid input)
         {
-            var starts = Enumerable.Range(0, input.Width).Select(x => (Down, new Point(x, 0)))
-                .Concat(Enumerable.Range(0, input.Width).Select(x => (Up, new Point(x, input.Height - 1))))
-                .Concat(Enumerable.Range(0, input.Height).Select(y => (Right, new Point(0, y))))
-                .Concat(Enumerable.Range(0, input.Height).Select(y => (Left, new Point(input.Width - 1, y))));
+            var starts = Enumerable.Range(0, input.Width).Select(x => (Down, new IntPoint(x, 0)))
+                .Concat(Enumerable.Range(0, input.Width).Select(x => (Up, new IntPoint(x, input.Height - 1))))
+                .Concat(Enumerable.Range(0, input.Height).Select(y => (Right, new IntPoint(0, y))))
+                .Concat(Enumerable.Range(0, input.Height).Select(y => (Left, new IntPoint(input.Width - 1, y))));
 
             return starts.Max(v => CalculateEnergy(v.Item1, v.Item2, input)).ToString();
         }
 
-        protected override FixedGrid ParseInput(List<string> lines)
+        protected override FixedIntGrid ParseInput(List<string> lines)
         {
-            return lines.ToGrid();
+            return lines.ToFixedIntGrid();
         }
     }
 }

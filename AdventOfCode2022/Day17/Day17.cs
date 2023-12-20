@@ -11,13 +11,13 @@ namespace AdventOfCode2022.Day17
 {
     public class Shape
     {
-        public List<Point> Points { get; }
+        public List<IntPoint> Points { get; }
         public Rectangle Box { get; }
 
-        public Shape(params Point[] points)
+        public Shape(params IntPoint[] points)
         {
             Points = points.ToList();
-            Box = new Rectangle(new Point(0, 0), Points.Max(p => p.X) + 1, Points.Max(p => p.Y) + 1);
+            Box = new Rectangle(new IntPoint(0, 0), Points.Max(p => p.X) + 1, Points.Max(p => p.Y) + 1);
         }
     }
 
@@ -25,14 +25,14 @@ namespace AdventOfCode2022.Day17
     {
         public Figure(long x, long y, Shape shape)
         {
-            Position = new LongPoint(x, y);
+            Position = new Point(x, y);
             Shape = shape;
         }
 
-        public LongPoint Position { get; }
+        public Point Position { get; }
         public Shape Shape { get; }
 
-        public IEnumerable<LongPoint> LongPoints
+        public IEnumerable<Point> LongPoints
         {
             get => Shape.Points.Select(p => Position + p);
         }
@@ -54,7 +54,7 @@ namespace AdventOfCode2022.Day17
 
     public class SegementDictionary
     {
-        private Dictionary<long, List<LongPoint>> _dict;
+        private Dictionary<long, List<Point>> _dict;
         public SegementDictionary(long segmentInterval)
         {
             _dict = new();
@@ -62,7 +62,7 @@ namespace AdventOfCode2022.Day17
         }
 
         public long SegmentInterval { get; }
-        public List<LongPoint> GetSegmentAt(long key)
+        public List<Point> GetSegmentAt(long key)
         {
             long segmentKey = key / SegmentInterval;
             if(!_dict.TryGetValue(segmentKey, out var result))
@@ -218,7 +218,7 @@ namespace AdventOfCode2022.Day17
                                 foreach (var point in segment)
                                 {
                                     var newY = point.Y + yIncrease;
-                                    segments.GetSegmentAt(newY).Add(new LongPoint(point.X, newY));
+                                    segments.GetSegmentAt(newY).Add(new Point(point.X, newY));
                                 }
                             }
                             WriteLine($"OLD: minY = {minY}, figuresLeft = {figuresLeft}");
@@ -340,7 +340,7 @@ namespace AdventOfCode2022.Day17
                 var segment = segments.GetSegmentAt(y);
                 for (var x = 0; x <= MaxX; x++)
                 {
-                    var point = new LongPoint(x, y);
+                    var point = new Point(x, y);
                     if (null != currentRock && currentRock.LongPoints.Contains(point))
                     {
                         Console.Write('@');

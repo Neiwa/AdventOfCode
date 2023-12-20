@@ -10,9 +10,9 @@
 
     public class SparseGrid<TValue> : Grid<TValue>
     {
-        private Dictionary<LongPoint, TValue> _grid = new();
+        private Dictionary<Point, TValue> _grid = new();
         private long minX, minY, maxX, maxY;
-        private readonly Func<LongPoint, TValue> _valueFactory;
+        private readonly Func<Point, TValue> _valueFactory;
 
         public override long Width => maxX - minX;
         public override long Height => maxY - minY;
@@ -21,12 +21,12 @@
         {
         }
 
-        public SparseGrid(Func<LongPoint, TValue> valueFactory)
+        public SparseGrid(Func<Point, TValue> valueFactory)
         {
             _valueFactory = valueFactory;
         }
 
-        public override void SetAt(LongPoint pos, TValue value)
+        public override void SetAt(Point pos, TValue value)
         {
             _grid[pos] = value;
 
@@ -49,7 +49,7 @@
             }
         }
 
-        public override TValue ValueAt(LongPoint pos)
+        public override TValue ValueAt(Point pos)
         {
             if (_grid.TryGetValue(pos, out var value))
             {

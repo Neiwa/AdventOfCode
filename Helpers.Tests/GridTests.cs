@@ -20,7 +20,7 @@ namespace Helpers.Tests
                 "def",
                 "ghi"
             };
-            var grid = lines.ToGrid();
+            var grid = lines.ToFixedIntGrid();
 
             // Act
             var actual = grid[0][0].Value;

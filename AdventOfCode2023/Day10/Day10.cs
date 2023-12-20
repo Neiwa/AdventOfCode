@@ -4,7 +4,7 @@ using Helpers.Grid;
 
 namespace AdventOfCode2023.Day10
 {
-    public class Day10 : BaseAoc<FixedGrid>
+    public class Day10 : BaseAoc<FixedIntGrid>
     {
         public bool[] GetPipeConfig(char p)
         {
@@ -29,40 +29,40 @@ namespace AdventOfCode2023.Day10
             }
         }
 
-        public bool Connected(FixedGridCellReference<char> left, FixedGridCellReference<char> right)
+        public bool Connected(FixedIntGridCellReference<char> left, FixedIntGridCellReference<char> right)
         {
             //   R
             // - L -
             //   |
-            if (left - right == new Point(0, 1))
+            if (left - right == new IntPoint(0, 1))
             {
                 return GetPipeConfig(left.Value)[0] && GetPipeConfig(right.Value)[2];
             }
             //   |
             // - L R
             //   |
-            if (left - right == new Point(-1, 0))
+            if (left - right == new IntPoint(-1, 0))
             {
                 return GetPipeConfig(left.Value)[1] && GetPipeConfig(right.Value)[3];
             }
             //   |
             // - L -
             //   R
-            if (left - right == new Point(0, -1))
+            if (left - right == new IntPoint(0, -1))
             {
                 return GetPipeConfig(left.Value)[2] && GetPipeConfig(right.Value)[0];
             }
             //   |
             // R L -
             //   |
-            if (left - right == new Point(1, 0))
+            if (left - right == new IntPoint(1, 0))
             {
                 return GetPipeConfig(left.Value)[3] && GetPipeConfig(right.Value)[1];
             }
             return false;
         }
 
-        public void Draw(FixedGrid map, Point? pos = null)
+        public void Draw(FixedIntGrid map, IntPoint? pos = null)
         {
             if (!IsTrace) { return; }
 
@@ -83,7 +83,7 @@ namespace AdventOfCode2023.Day10
             }
         }
 
-        public override string PartOne(FixedGrid input)
+        public override string PartOne(FixedIntGrid input)
         {
             var startPos = input.First(c => c.Value == 'S');
             var currPos = startPos;
@@ -110,7 +110,7 @@ namespace AdventOfCode2023.Day10
             return (length / 2).ToString();
         }
 
-        public override string PartTwo(FixedGrid input)
+        public override string PartTwo(FixedIntGrid input)
         {
             // Plot real map
 
@@ -120,8 +120,8 @@ namespace AdventOfCode2023.Day10
             //           .|.
             // and so on
 
-            var realMap = new FixedGrid(input.Width * 3, input.Height * 3, '.');
-            var cleanMap = new FixedGrid(input.Width, input.Height, '.');
+            var realMap = new FixedIntGrid(input.Width * 3, input.Height * 3, '.');
+            var cleanMap = new FixedIntGrid(input.Width, input.Height, '.');
 
             var startPos = input.First(c => c.Value == 'S');
             var currPos = startPos;
@@ -137,12 +137,12 @@ namespace AdventOfCode2023.Day10
                     if (Connected(pos, currPos))
                     {
                         var conf = GetPipeConfig(pos.Value);
-                        var realMapPos = realMap.At(pos.Point * 3 + new Point(1, 1));
+                        var realMapPos = realMap.At(pos.Point * 3 + new IntPoint(1, 1));
                         realMapPos.Value = pos.Value;
-                        if (conf[0]) (realMapPos + new Point(0, -1)).Value = '|';
-                        if (conf[1]) (realMapPos + new Point(1, 0)).Value = '-';
-                        if (conf[2]) (realMapPos + new Point(0, 1)).Value = '|';
-                        if (conf[3]) (realMapPos + new Point(-1, 0)).Value = '-';
+                        if (conf[0]) (realMapPos + new IntPoint(0, -1)).Value = '|';
+                        if (conf[1]) (realMapPos + new IntPoint(1, 0)).Value = '-';
+                        if (conf[2]) (realMapPos + new IntPoint(0, 1)).Value = '|';
+                        if (conf[3]) (realMapPos + new IntPoint(-1, 0)).Value = '-';
                         //Draw(realMap, realMapPos.Point);
 
                         cleanMap.At(pos.Point).Value = pos.Value;
@@ -162,9 +162,9 @@ namespace AdventOfCode2023.Day10
             // choose a . in edge and flood from there (replace . with W). Collapse map and count remaining .
             // Collapse, keep only center of every expanded node
 
-            HashSet<Point> fillPoints = new HashSet<Point>
+            HashSet<IntPoint> fillPoints = new HashSet<IntPoint>
             {
-                new Point(0, 0)
+                new IntPoint(0, 0)
             };
 
             while (fillPoints.Any())
@@ -195,9 +195,9 @@ namespace AdventOfCode2023.Day10
             return cleanMap.Count(c => c.Value == '.').ToString();
         }
 
-        protected override FixedGrid ParseInput(List<string> lines)
+        protected override FixedIntGrid ParseInput(List<string> lines)
         {
-            return lines.ToGrid();
+            return lines.ToFixedIntGrid();
         }
     }
 }

@@ -11,23 +11,23 @@ namespace AdventOfCode2022.Day23
 {
     public class Day23 : BaseAoc<Board>
     {
-        Dictionary<int, List<Point>> directionToPoints = new()
+        Dictionary<int, List<IntPoint>> directionToPoints = new()
         {
             {0, new(){ new(0, -1), new(-1, -1), new(1, -1)} },
             {1, new(){ new(0, 1), new(-1, 1), new(1, 1)} },
             {2, new(){ new(-1, 0), new(-1, 1), new(-1, -1)} },
             {3, new(){ new(1, 0), new(1, 1), new(1, -1)} },
         };
-        List<Point> around = new()
+        List<IntPoint> around = new()
         {
-            new Point(-1, -1),
-            new Point(0, -1),
-            new Point(1, -1),
-            new Point(1, 0),
-            new Point(1, 1),
-            new Point(0, 1),
-            new Point(-1, 1),
-            new Point(-1, 0)
+            new IntPoint(-1, -1),
+            new IntPoint(0, -1),
+            new IntPoint(1, -1),
+            new IntPoint(1, 0),
+            new IntPoint(1, 1),
+            new IntPoint(0, 1),
+            new IntPoint(-1, 1),
+            new IntPoint(-1, 0)
         };
 
         public override string PartOne(Board input)
@@ -36,11 +36,11 @@ namespace AdventOfCode2022.Day23
             Draw(drawMinBounds);
             for (int round = 0; round < 10; round++)
             {
-                ValueCreationDictionary<Point, List<Point>> proposals = new(); // Key: To, Value(s): From
-                List<Point> newElves = new();
+                ValueCreationDictionary<IntPoint, List<IntPoint>> proposals = new(); // Key: To, Value(s): From
+                List<IntPoint> newElves = new();
                 foreach (var elf in Input.Elves)
                 {
-                    Point? move = null;
+                    IntPoint? move = null;
                     if (around.Any(p => Input.Elves.Contains(elf + p)))
                     {
                         for (int i = 0; i < 4; i++)
@@ -111,11 +111,11 @@ namespace AdventOfCode2022.Day23
             do
             {
                 elfMoved = false;
-                ValueCreationDictionary<Point, List<Point>> proposals = new(); // Key: To, Value(s): From
-                List<Point> newElves = new();
+                ValueCreationDictionary<IntPoint, List<IntPoint>> proposals = new(); // Key: To, Value(s): From
+                List<IntPoint> newElves = new();
                 foreach (var elf in Input.Elves)
                 {
-                    Point? move = null;
+                    IntPoint? move = null;
                     if (around.Any(p => Input.Elves.Contains(elf + p)))
                     {
                         for (int i = 0; i < 4; i++)
@@ -177,14 +177,14 @@ namespace AdventOfCode2022.Day23
 
         protected override Board ParseInput(List<string> lines)
         {
-            List<Point> elves = new();
+            List<IntPoint> elves = new();
             for (int y = 0; y < lines.Count; y++)
             {
                 for (int x = 0; x < lines[y].Length; x++)
                 {
                     if (lines[y][x] == '#')
                     {
-                        elves.Add(new Point(x, y));
+                        elves.Add(new IntPoint(x, y));
                     }
                 }
             }
@@ -236,24 +236,24 @@ namespace AdventOfCode2022.Day23
 
     public struct Move
     {
-        public Move(Point source, Point target)
+        public Move(IntPoint source, IntPoint target)
         {
             Source = source;
             Target = target;
         }
-        public Point Source { get; set; }
-        public Point Target { get; set; }
+        public IntPoint Source { get; set; }
+        public IntPoint Target { get; set; }
         public bool Valid { get; set; } = true;
     }
 
     public class Board
     {
-        public Board(List<Point> elves)
+        public Board(List<IntPoint> elves)
         {
             Elves = elves;
         }
 
-        public List<Point> Elves { get; set; }
+        public List<IntPoint> Elves { get; set; }
         public int CurrentDirection { get; set; } = 0;
     }
 }

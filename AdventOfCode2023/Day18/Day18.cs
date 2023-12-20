@@ -7,17 +7,17 @@ namespace AdventOfCode2023.Day18
 {
     public class Day18 : BaseAocV2
     {
-        public record Instruction(Point Direction, int Steps);
+        public record Instruction(IntPoint Direction, int Steps);
 
         public Instruction Parse(string line)
         {
             var m = Regex.Match(line, @"(?<dir>.) (?<steps>\d+) \(#(?<color>[\da-f]+)\)");
             var direction = m.Groups["dir"].Value switch
             {
-                "U" => new Point(0, -1),
-                "R" => new Point(1, 0),
-                "D" => new Point(0, 1),
-                "L" => new Point(-1, 0),
+                "U" => new IntPoint(0, -1),
+                "R" => new IntPoint(1, 0),
+                "D" => new IntPoint(0, 1),
+                "L" => new IntPoint(-1, 0),
                 _ => throw new NotImplementedException(),
             };
             var steps = int.Parse(m.Groups["steps"].Value);
@@ -30,10 +30,10 @@ namespace AdventOfCode2023.Day18
             var m = Regex.Match(line, @". \d+ \(#(?<steps>[\da-f]{5})(?<dir>.)\)");
             var direction = m.Groups["dir"].Value switch
             {
-                "3" => new Point(0, -1),
-                "0" => new Point(1, 0),
-                "1" => new Point(0, 1),
-                "2" => new Point(-1, 0),
+                "3" => new IntPoint(0, -1),
+                "0" => new IntPoint(1, 0),
+                "1" => new IntPoint(0, 1),
+                "2" => new IntPoint(-1, 0),
                 _ => throw new NotImplementedException(),
             };
             var steps = Convert.ToInt32(m.Groups["steps"].Value, 16);
@@ -41,7 +41,7 @@ namespace AdventOfCode2023.Day18
             return new Instruction(direction, steps);
         }
 
-        public void Draw(FixedGrid grid)
+        public void Draw(FixedIntGrid grid)
         {
             if (!IsTrace) return;
 
@@ -58,12 +58,12 @@ namespace AdventOfCode2023.Day18
         public override string PartOne(List<string> lines)
         {
             var instructions = lines.Select(Parse);
-            var sparseGrid = new HashSet<Point>();
-            var currentPoint = new Point(0, 0);
+            var sparseGrid = new HashSet<IntPoint>();
+            var currentPoint = new IntPoint(0, 0);
             sparseGrid.Add(currentPoint);
 
-            var topLeft = new Point(0, 0);
-            var bottomRight = new Point(0, 0);
+            var topLeft = new IntPoint(0, 0);
+            var bottomRight = new IntPoint(0, 0);
 
             foreach (var instruction in instructions)
             {
@@ -93,9 +93,9 @@ namespace AdventOfCode2023.Day18
 
             var bounds = new Rectangle(topLeft, bottomRight);
 
-            var shift = new Point(1, 1) - topLeft;
+            var shift = new IntPoint(1, 1) - topLeft;
 
-            var map = new FixedGrid(bounds.Width + 2, bounds.Height + 2, '.');
+            var map = new FixedIntGrid(bounds.Width + 2, bounds.Height + 2, '.');
             foreach (var point in sparseGrid)
             {
                 map.At(point + shift).Value = '#';
@@ -103,7 +103,7 @@ namespace AdventOfCode2023.Day18
 
             Draw(map);
 
-            var floodStack = new Stack<FixedGridCellReference<char>>();
+            var floodStack = new Stack<FixedIntGridCellReference<char>>();
             floodStack.Push(map.At(0, 0));
             while (floodStack.Any())
             {
@@ -120,15 +120,15 @@ namespace AdventOfCode2023.Day18
             return map.Count(c => c.Value == '#' || c.Value == '.').ToString();
         }
 
-        public record Line(Point Left, Point Right, Instruction Instruction);
+        public record Line(IntPoint Left, IntPoint Right, Instruction Instruction);
 
         public override string PartTwo(List<string> lines)
         {
             var instructions = lines.Select(ParsePartTwo);
 
-            var currentPoint = new Point(0, 0);
+            var currentPoint = new IntPoint(0, 0);
 
-            var sparseGrid = new HashSet<Point>();
+            var sparseGrid = new HashSet<IntPoint>();
             sparseGrid.Add(currentPoint);
 
             var xLocations = new List<int> { 0 };
@@ -147,23 +147,23 @@ namespace AdventOfCode2023.Day18
             var xOrder = sparseGrid.Select(p => p.X).Concat(xLocations).OrderBy(x => x).Distinct().ToList();
             var yOrder = sparseGrid.Select(p => p.Y).Concat(yLocations).OrderBy(y => y).Distinct().ToList();
 
-            var compactMap = new FixedGrid(xOrder.Count + 2, yOrder.Count + 2, '.');
-            var compactCurrent = new Point(0, 0);
+            var compactMap = new FixedIntGrid(xOrder.Count + 2, yOrder.Count + 2, '.');
+            var compactCurrent = new IntPoint(0, 0);
             foreach (var instruction in instructions)
             {
-                var start = new Point(xOrder.IndexOf(compactCurrent.X), yOrder.IndexOf(compactCurrent.Y));
+                var start = new IntPoint(xOrder.IndexOf(compactCurrent.X), yOrder.IndexOf(compactCurrent.Y));
                 compactCurrent += instruction.Direction * instruction.Steps;
-                var end = new Point(xOrder.IndexOf(compactCurrent.X), yOrder.IndexOf(compactCurrent.Y));
+                var end = new IntPoint(xOrder.IndexOf(compactCurrent.X), yOrder.IndexOf(compactCurrent.Y));
                 do
                 {
-                    compactMap.At(start + new Point(1, 1)).Value = '#';
+                    compactMap.At(start + new IntPoint(1, 1)).Value = '#';
                     start += instruction.Direction;
                 } while (start != end);
             }
 
             Draw(compactMap);
 
-            var floodStack = new Stack<FixedGridCellReference<char>>();
+            var floodStack = new Stack<FixedIntGridCellReference<char>>();
             floodStack.Push(compactMap.At(0, 0));
             while (floodStack.Any())
             {

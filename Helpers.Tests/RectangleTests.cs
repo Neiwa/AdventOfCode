@@ -13,8 +13,8 @@ namespace Helpers.Tests
         public void Constructor_TwoPoints(int firstX, int firstY, int bottomRightX, int bottomRightY, int expectedWidth, int expectedHeight)
         {
             // Arrange
-            Point firstPoint = new Point(firstX, firstY);
-            Point bottomRightPoint = new Point(bottomRightX, bottomRightY);
+            IntPoint firstPoint = new IntPoint(firstX, firstY);
+            IntPoint bottomRightPoint = new IntPoint(bottomRightX, bottomRightY);
 
             // Act
             var actual = new Rectangle(firstPoint, bottomRightPoint);

@@ -4,9 +4,9 @@ using Helpers.Grid;
 
 namespace AdventOfCode2023.Day14
 {
-    public class Day14 : BaseAoc<FixedGrid>
+    public class Day14 : BaseAoc<FixedIntGrid>
     {
-        public void Draw(FixedGrid<char> grid)
+        public void Draw(FixedIntGrid<char> grid)
         {
             if (!IsTrace) return;
 
@@ -20,18 +20,18 @@ namespace AdventOfCode2023.Day14
             }
         }
 
-        public override string PartOne(FixedGrid input)
+        public override string PartOne(FixedIntGrid input)
         {
             var rocks = input.Where(c => c.Value == 'O');
 
             foreach (var rock in rocks)
             {
-                var nextPos = rock - new Point(0, 1);
+                var nextPos = rock - new IntPoint(0, 1);
                 var newPos = rock;
                 while (nextPos.IsValid() && nextPos.Value == '.')
                 {
                     newPos = nextPos;
-                    nextPos -= new Point(0, 1);
+                    nextPos -= new IntPoint(0, 1);
                 }
                 if (newPos != rock)
                 {
@@ -45,23 +45,23 @@ namespace AdventOfCode2023.Day14
             return input.Where(c => c.Value == 'O').Sum(c => input.Height - c.Y).ToString();
         }
 
-        public override string PartTwo(FixedGrid input)
+        public override string PartTwo(FixedIntGrid input)
         {
-            var cycle = new List<Point>
+            var cycle = new List<IntPoint>
             {
-                new Point(0, -1),
-                new Point(-1, 0),
-                new Point(0, 1),
-                new Point(1, 0)
+                new IntPoint(0, -1),
+                new IntPoint(-1, 0),
+                new IntPoint(0, 1),
+                new IntPoint(1, 0)
             };
 
-            var historyStack = new List<FixedGrid<char>>();
+            var historyStack = new List<FixedIntGrid<char>>();
 
             for (var i = 0; i < 1_000_000_000; i++)
             {
                 foreach (var shift in cycle)
                 {
-                    var rocks = input.Iterate(new Point(0, 0) - shift).Where(c => c.Value == 'O');
+                    var rocks = input.Iterate(new IntPoint(0, 0) - shift).Where(c => c.Value == 'O');
 
                     foreach (var rock in rocks)
                     {
@@ -102,9 +102,9 @@ namespace AdventOfCode2023.Day14
             return input.Where(c => c.Value == 'O').Sum(c => input.Height - c.Y).ToString();
         }
 
-        protected override FixedGrid ParseInput(List<string> lines)
+        protected override FixedIntGrid ParseInput(List<string> lines)
         {
-            return lines.ToGrid();
+            return lines.ToFixedIntGrid();
         }
     }
 }

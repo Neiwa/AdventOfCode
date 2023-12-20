@@ -1,5 +1,4 @@
-﻿using Helpers.Grid;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Helpers.Grid
 {
@@ -19,30 +18,37 @@ namespace Helpers.Grid
         public abstract IEnumerator<GridCellReference<TValue>> GetEnumerator();
         public virtual void SetAt(long x, long y, TValue value)
         {
-            SetAt(new LongPoint(x, y), value);
+            SetAt(new Point(x, y), value);
         }
-        public abstract void SetAt(LongPoint pos, TValue value);
+        public abstract void SetAt(Point pos, TValue value);
         public virtual TValue ValueAt(long x, long y)
         {
-            return ValueAt(new LongPoint(x, y));
+            return ValueAt(new Point(x, y));
         }
-        public abstract TValue ValueAt(LongPoint pos);
+        public abstract TValue ValueAt(Point pos);
 
-        public virtual bool Valid(LongPoint pos)
+        public virtual bool Valid(Point pos)
         {
             return Valid(pos.X, pos.Y);
         }
         public abstract bool Valid(long x, long y);
+
+        public virtual GridCellReference<TValue> At(Point point)
+        {
+            return new GridCellReference<TValue>(this, point);
+        }
+
+        public virtual GridCellReference<TValue> At(long x, long y)
+        {
+            return new GridCellReference<TValue>(this, x, y);
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
     }
-}
 
-namespace Helpers
-{
     public class GridRowReference<TValue>
     {
         internal Grid<TValue> _grid;
@@ -76,7 +82,7 @@ namespace Helpers
             X = x;
             Y = y;
         }
-        public GridCellReference(Grid<TValue> grid, LongPoint point)
+        public GridCellReference(Grid<TValue> grid, Point point)
         {
             _grid = grid;
             X = point.X;
@@ -92,14 +98,14 @@ namespace Helpers
             }
         }
 
-        public LongPoint Point => new(X, Y);
+        public Point Point => new(X, Y);
 
         public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false)
         {
-            var shifts = new List<LongPoint>();
+            var shifts = new List<Point>();
             if (includeDiagonal)
             {
-                shifts = new List<LongPoint>
+                shifts = new List<Point>
                 {
                     new (0, -1),
                     new (1, -1),
@@ -113,7 +119,7 @@ namespace Helpers
             }
             else
             {
-                shifts = new List<LongPoint>
+                shifts = new List<Point>
                 {
                     new (0, -1),
                     new (1, 0),
@@ -147,12 +153,12 @@ namespace Helpers
             return new GridCellReference<TValue>(left._grid, left.Point - right.Point);
         }
 
-        public static GridCellReference<TValue> operator +(GridCellReference<TValue> left, LongPoint right)
+        public static GridCellReference<TValue> operator +(GridCellReference<TValue> left, Point right)
         {
             return new GridCellReference<TValue>(left._grid, left.Point + right);
         }
 
-        public static GridCellReference<TValue> operator -(GridCellReference<TValue> left, LongPoint right)
+        public static GridCellReference<TValue> operator -(GridCellReference<TValue> left, Point right)
         {
             return new GridCellReference<TValue>(left._grid, left.Point - right);
         }
@@ -167,16 +173,16 @@ namespace Helpers
             return left.Point != right.Point || left._grid != right._grid;
         }
 
-        public static bool operator ==(GridCellReference<TValue> left, LongPoint right)
+        public static bool operator ==(GridCellReference<TValue> left, Point right)
         {
             return left.Point == right;
         }
 
-        public static bool operator !=(GridCellReference<TValue> left, LongPoint right)
+        public static bool operator !=(GridCellReference<TValue> left, Point right)
         {
             return left.Point != right;
         }
 
-        public static implicit operator LongPoint(GridCellReference<TValue> p) => p.Point;
+        public static implicit operator Point(GridCellReference<TValue> p) => p.Point;
     }
 }

@@ -4,9 +4,9 @@ using Helpers.Grid;
 
 namespace AdventOfCode2023.Day17
 {
-    public class Day17 : BaseAoc<FixedGrid<int>>
+    public class Day17 : BaseAoc<FixedIntGrid<int>>
     {
-        public void Draw(FixedGrid<int> grid, IList<State> path)
+        public void Draw(FixedIntGrid<int> grid, IList<State> path)
         {
             if (!IsDebug) return;
 
@@ -14,7 +14,7 @@ namespace AdventOfCode2023.Day17
             {
                 for (int x = 0; x < grid.Width; x++)
                 {
-                    var node = path.FirstOrDefault(s => s.Position == new Point(x, y));
+                    var node = path.FirstOrDefault(s => s.Position == new IntPoint(x, y));
                     if (node is not null)
                     {
                         if (node.Direction.X > 0)
@@ -47,11 +47,11 @@ namespace AdventOfCode2023.Day17
             }
         }
 
-        public record State(Point Position, Point Direction, int Length);
+        public record State(IntPoint Position, IntPoint Direction, int Length);
 
-        public override string PartOne(FixedGrid<int> input)
+        public override string PartOne(FixedIntGrid<int> input)
         {
-            var start = new State(input.At(0, 0), new Point(0, 1), 0);
+            var start = new State(input.At(0, 0), new IntPoint(0, 1), 0);
             var goal = input.At(input.Width - 1, input.Height - 1);
 
             IEnumerable<State> getNeighbors(State current)
@@ -85,9 +85,9 @@ namespace AdventOfCode2023.Day17
             return path.Skip(1).Sum(c => input.At(c.Position).Value).ToString();
         }
 
-        public override string PartTwo(FixedGrid<int> input)
+        public override string PartTwo(FixedIntGrid<int> input)
         {
-            var start = new State(input.At(0, 0), new Point(0, 1), 0);
+            var start = new State(input.At(0, 0), new IntPoint(0, 1), 0);
             var goal = input.At(input.Width - 1, input.Height - 1);
 
             IEnumerable<State> getNeighbors(State current)
@@ -137,9 +137,9 @@ namespace AdventOfCode2023.Day17
             return minHeatLoss.ToString();
         }
 
-        protected override FixedGrid<int> ParseInput(List<string> lines)
+        protected override FixedIntGrid<int> ParseInput(List<string> lines)
         {
-            return lines.ToGrid(c => c - 48);
+            return lines.ToFixedIntGrid(c => c - 48);
         }
     }
 }

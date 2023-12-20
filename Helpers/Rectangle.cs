@@ -2,13 +2,13 @@
 {
     public class Rectangle
     {
-        public Rectangle(Point position, int width) : this(position, width, width)
+        public Rectangle(IntPoint position, int width) : this(position, width, width)
         {
         }
-        public Rectangle(Point position, Point bottomRight) : this(position, bottomRight.X - position.X + 1, bottomRight.Y - position.Y + 1)
+        public Rectangle(IntPoint position, IntPoint bottomRight) : this(position, bottomRight.X - position.X + 1, bottomRight.Y - position.Y + 1)
         {
         }
-        public Rectangle(Point position, int width, int height)
+        public Rectangle(IntPoint position, int width, int height)
         {
             Position = position;
             Width = width;
@@ -19,11 +19,11 @@
         {
         }
 
-        public Rectangle(int x, int y, int width, int height) : this(new Point(x, y), width, height)
+        public Rectangle(int x, int y, int width, int height) : this(new IntPoint(x, y), width, height)
         {
         }
 
-        public Point Position { get; set; }
+        public IntPoint Position { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -56,7 +56,7 @@
             }
         }
 
-        public bool Contains(Point point)
+        public bool Contains(IntPoint point)
         {
             return point.X >= Position.X &&
                 point.X <= Position.X + Width - 1 &&

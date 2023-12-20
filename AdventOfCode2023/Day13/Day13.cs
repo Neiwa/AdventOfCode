@@ -6,7 +6,7 @@ namespace AdventOfCode2023.Day13
 {
     public class Day13 : BaseAocV2
     {
-        public void Draw(FixedGrid grid, Rectangle left, Rectangle reflection)
+        public void Draw(FixedIntGrid grid, Rectangle left, Rectangle reflection)
         {
             if (!IsTrace) return;
 
@@ -34,14 +34,14 @@ namespace AdventOfCode2023.Day13
 
         public override string PartOne(List<string> lines)
         {
-            var grids = new List<FixedGrid>();
+            var grids = new List<FixedIntGrid>();
             var start = 0;
 
             for (int i = 0; i <= lines.Count; i++)
             {
                 if (i == lines.Count || string.IsNullOrEmpty(lines[i]))
                 {
-                    grids.Add(lines.Skip(start).Take(i - start).ToGrid());
+                    grids.Add(lines.Skip(start).Take(i - start).ToFixedIntGrid());
                     start = i + 1;
                 }
             }
@@ -71,7 +71,7 @@ namespace AdventOfCode2023.Day13
                         //  6 
                         //  7 r
 
-                        var reflection = cell + new Point(0, (hPos - cell.Y) * 2 - 1);
+                        var reflection = cell + new IntPoint(0, (hPos - cell.Y) * 2 - 1);
                         if (reflection.Value != cell.Value)
                         {
                             validReflection = false;
@@ -104,7 +104,7 @@ namespace AdventOfCode2023.Day13
 
                     foreach (var cell in grid.Where(c => bounds.Contains(c)))
                     {
-                        var reflection = cell + new Point((vPos - cell.X) * 2 - 1, 0);
+                        var reflection = cell + new IntPoint((vPos - cell.X) * 2 - 1, 0);
                         if (reflection.Value != cell.Value)
                         {
                             validReflection = false;
@@ -128,14 +128,14 @@ namespace AdventOfCode2023.Day13
 
         public override string PartTwo(List<string> lines)
         {
-            var grids = new List<FixedGrid>();
+            var grids = new List<FixedIntGrid>();
             var start = 0;
 
             for (int i = 0; i <= lines.Count; i++)
             {
                 if (i == lines.Count || string.IsNullOrEmpty(lines[i]))
                 {
-                    grids.Add(lines.Skip(start).Take(i - start).ToGrid());
+                    grids.Add(lines.Skip(start).Take(i - start).ToFixedIntGrid());
                     start = i + 1;
                 }
             }
@@ -165,7 +165,7 @@ namespace AdventOfCode2023.Day13
                         //  6 
                         //  7 r
 
-                        var reflection = cell + new Point(0, (hPos - cell.Y) * 2 - 1);
+                        var reflection = cell + new IntPoint(0, (hPos - cell.Y) * 2 - 1);
                         if (reflection.Value != cell.Value)
                         {
                             if (errors++ > 1) break;
@@ -197,7 +197,7 @@ namespace AdventOfCode2023.Day13
 
                     foreach (var cell in grid.Where(c => bounds.Contains(c)))
                     {
-                        var reflection = cell + new Point((vPos - cell.X) * 2 - 1, 0);
+                        var reflection = cell + new IntPoint((vPos - cell.X) * 2 - 1, 0);
                         if (reflection.Value != cell.Value)
                         {
                             if (errors++ > 1) break;

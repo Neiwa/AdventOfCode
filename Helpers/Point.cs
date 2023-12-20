@@ -2,16 +2,26 @@
 {
     public class Point
     {
-        public Point(int x, int y)
+        public Point(long x, long y)
         {
             X = x;
             Y = y;
         }
 
-        public int X { get; set; }
-        public int Y { get; set; }
+        public long X { get; set; }
+        public long Y { get; set; }
 
+
+        public static implicit operator Point(IntPoint p) => new Point(p.X, p.Y);
         public static Point operator +(Point left, Point right)
+        {
+            return new Point(left.X + right.X, left.Y + right.Y);
+        }
+        public static Point operator +(Point left, IntPoint right)
+        {
+            return new Point(left.X + right.X, left.Y + right.Y);
+        }
+        public static Point operator +(IntPoint left, Point right)
         {
             return new Point(left.X + right.X, left.Y + right.Y);
         }
@@ -28,12 +38,12 @@
             return !left.Equals(right);
         }
 
-        public static Point operator *(Point left, int right)
+        public static Point operator *(Point left, long right)
         {
             return new Point(left.X * right, left.Y * right);
         }
 
-        public static Point operator /(Point left, int right)
+        public static Point operator /(Point left, long right)
         {
             return new Point(left.X / right, left.Y / right);
         }
@@ -54,7 +64,7 @@
 
         public override int GetHashCode()
         {
-            return 31 * X + Y;
+            return (int)((31 * X + Y) % int.MaxValue);
         }
 
         public override string ToString()

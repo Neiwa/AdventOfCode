@@ -11,7 +11,7 @@ namespace AdventOfCode2023.Day03
     public class Map
     {
         public List<(string, Rectangle)> Numbers { get; set; } = new List<(string, Rectangle)> ();
-        public Dictionary<Point, char> Symbols { get; set; } = new Dictionary<Point, char>();
+        public Dictionary<IntPoint, char> Symbols { get; set; } = new Dictionary<IntPoint, char>();
     }
 
     public class Day03 : BaseAoc<Map>
@@ -73,7 +73,7 @@ namespace AdventOfCode2023.Day03
                     }
                     else
                     {
-                        map.Symbols.Add(new Point(j, i), lines[i][j]);
+                        map.Symbols.Add(new IntPoint(j, i), lines[i][j]);
                         if (buffer.Length > 0)
                         {
                             map.Numbers.Add((buffer, new Rectangle(j - buffer.Length, i, buffer.Length, 1)));
