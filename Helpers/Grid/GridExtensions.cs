@@ -19,11 +19,16 @@
 
         public static Grid<char> ToGrid(this IEnumerable<string> lines)
         {
+            return ToFixedGrid(lines);
+        }
+
+        public static FixedGrid<char> ToFixedGrid(this IEnumerable<string> lines)
+        {
             char[,] grid = new char[lines.Count(), lines.First().Length];
-            long x = 0;
             long y = 0;
             foreach (var line in lines)
             {
+                long x = 0;
                 foreach (var c in line)
                 {
                     grid[y, x++] = c;
