@@ -13,12 +13,12 @@
         /// <param name="getNeighbors"></param>
         /// <param name="edgeWeight">Returns the weight of the edge between two nodes. (Default: 1)</param>
         /// <returns></returns>
-        public static List<T> AStar<T>(T start, T goal, Func<T, int> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, int>? edgeWeight = null) where T : notnull
+        public static List<T> AStar<T>(T start, T goal, Func<T, long> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, long>? edgeWeight = null) where T : notnull
         {
-            return AStar(start, goal, h, compare, getNeighbors, edgeWeight);
+            return AStar(start, state => compare(state, goal), h, compare, getNeighbors, edgeWeight);
         }
 
-        public static List<T> AStar<T>(T start, Func<T, bool> goalReached, Func<T, int> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, int>? edgeWeight = null) where T : notnull
+        public static List<T> AStar<T>(T start, Func<T, bool> goalReached, Func<T, long> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, long>? edgeWeight = null) where T : notnull
         {
             if (edgeWeight == null)
             {
@@ -27,10 +27,10 @@
 
             List<T> openSet = new() { start };
             Dictionary<T, T> cameFrom = new();
-            Dictionary<T, int> gScore = new() { { start, 0 } };
-            Dictionary<T, int> fScore = new() { { start, h(start) } };
+            Dictionary<T, long> gScore = new() { { start, 0 } };
+            Dictionary<T, long> fScore = new() { { start, h(start) } };
 
-            int getGScore(T pos)
+            long getGScore(T pos)
             {
                 if (gScore.TryGetValue(pos, out var value))
                 {
@@ -38,7 +38,7 @@
                 }
                 return int.MaxValue;
             }
-            int getFScore(T pos)
+            long getFScore(T pos)
             {
                 if (fScore.TryGetValue(pos, out var value))
                 {

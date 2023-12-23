@@ -20,6 +20,16 @@
             }
         }
 
+        public static IEnumerable<T> Enumeration<T>(params T[] values)
+        {
+            return values;
+        }
+
+        public static IEnumerable<T> AsEnumerable<T>(this T value)
+        {
+            return Enumerable.Empty<T>().Append(value);
+        }
+
         public static IEnumerable<HashSet<T>> GetAllSubSets<T>(IEnumerable<T> set)
         {
             if (!set.Any())

@@ -237,7 +237,7 @@ namespace AdventOfCode2023.Day22
 
                 var freeFloating = supporting[i].Where(brick => !restingOn[brick].Except(removed).Any());
 
-                resting.Enqueue(freeFloating);
+                resting.EnqueueRange(freeFloating);
 
                 while (resting.TryDequeue(out var brick))
                 {
@@ -249,7 +249,7 @@ namespace AdventOfCode2023.Day22
                     removed.Add(brick);
                     supportValue++;
                     freeFloating = supporting[brick].Where(brick => !restingOn[brick].Except(removed).Any());
-                    resting.Enqueue(freeFloating);
+                    resting.EnqueueRange(freeFloating);
                 }
 
                 return supportValue;

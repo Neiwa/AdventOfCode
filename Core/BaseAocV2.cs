@@ -12,8 +12,8 @@
             return lines;
         }
 
-        public abstract override string PartOne(List<string> lines);
+        public abstract override object PartOne(List<string> lines);
 
-        public abstract override string PartTwo(List<string> lines);
+        public abstract override object PartTwo(List<string> lines);
     }
 }

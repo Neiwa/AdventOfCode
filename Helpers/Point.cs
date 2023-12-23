@@ -11,6 +11,8 @@
         public long X { get; set; }
         public long Y { get; set; }
 
+        public long ManhattanLength => Math.Abs(X) + Math.Abs(Y);
+
 
         public static implicit operator Point(IntPoint p) => new Point(p.X, p.Y);
         public static Point operator +(Point left, Point right)

@@ -149,8 +149,8 @@ namespace Core
 
         protected abstract TInput ParseInput(List<string> lines);
 
-        public abstract string PartOne(TInput input);
-        public abstract string PartTwo(TInput input);
+        public abstract object PartOne(TInput input);
+        public abstract object PartTwo(TInput input);
 
         [TestCase("input.txt", ActionLevel.Debug)]
         [TestCase("input.txt", ActionLevel.Info)]
@@ -170,12 +170,12 @@ namespace Core
             RunTest(PartTwo, fileName, level);
         }
 
-        private void RunTest(Func<TInput, string> partMethod, string fileName, ActionLevel level)
+        private void RunTest(Func<TInput, object> partMethod, string fileName, ActionLevel level)
         {
             Level = level;
             FileName = fileName;
             Input = ParseInput(GetInput(fileName));
-            var res = partMethod(Input);
+            var res = partMethod(Input).ToString();
             WriteLine($"Answer: {res}", level: ActionLevel.Info);
         }
     }
