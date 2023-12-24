@@ -148,6 +148,15 @@ namespace Core
         public string? SessionCookie { get; set; }
 
         protected abstract TInput ParseInput(List<string> lines);
+        public virtual async Task<object> PartOneAsync(TInput input)
+        {
+            return await Task.FromResult(PartOne(input));
+        }
+
+        public virtual async Task<object> PartTwoAsync(TInput input)
+        {
+            return await Task.FromResult(PartTwo(input));
+        }
 
         public abstract object PartOne(TInput input);
         public abstract object PartTwo(TInput input);
@@ -156,26 +165,26 @@ namespace Core
         [TestCase("input.txt", ActionLevel.Info)]
         [TestCase("example.txt", ActionLevel.Debug)]
         [TestCase("example.txt", ActionLevel.Trace)]
-        public void PartOneTest(string fileName, ActionLevel level)
+        public async Task PartOneTest(string fileName, ActionLevel level)
         {
-            RunTest(PartOne, fileName, level);
+            await RunTest(PartOneAsync, fileName, level);
         }
 
         [TestCase("input.txt", ActionLevel.Debug)]
         [TestCase("input.txt", ActionLevel.Info)]
         [TestCase("example.txt", ActionLevel.Debug)]
         [TestCase("example.txt", ActionLevel.Trace)]
-        public void PartTwoTest(string fileName, ActionLevel level)
+        public async Task PartTwoTest(string fileName, ActionLevel level)
         {
-            RunTest(PartTwo, fileName, level);
+            await RunTest(PartTwoAsync, fileName, level);
         }
 
-        private void RunTest(Func<TInput, object> partMethod, string fileName, ActionLevel level)
+        private async Task RunTest(Func<TInput, Task<object>> partMethod, string fileName, ActionLevel level)
         {
             Level = level;
             FileName = fileName;
             Input = ParseInput(GetInput(fileName));
-            var res = partMethod(Input).ToString();
+            var res = (await partMethod(Input)).ToString();
             WriteLine($"Answer: {res}", level: ActionLevel.Info);
         }
     }

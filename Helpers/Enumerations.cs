@@ -72,5 +72,15 @@
                 minIndex = str.IndexOf(searchstring, minIndex + increment);
             }
         }
+
+        public static TOut? MaxOrDefault<T, TOut>(this IEnumerable<T> source, Func<T, TOut> selector, TOut defaultValue = default)
+        {
+            return source.Any() ? source.Max(selector) : defaultValue;
+        }
+
+        public static TOut? MinOrDefault<T, TOut>(this IEnumerable<T> source, Func<T, TOut> selector, TOut defaultValue = default)
+        {
+            return source.Any() ? source.Min(selector) : defaultValue;
+        }
     }
 }

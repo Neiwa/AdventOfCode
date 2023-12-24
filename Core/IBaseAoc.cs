@@ -6,8 +6,8 @@
 
         event EventHandler<WriteEventArgs> Writing;
 
-        void PartOneTest(string fileName, ActionLevel level);
-        void PartTwoTest(string fileName, ActionLevel level);
+        Task PartOneTest(string fileName, ActionLevel level);
+        Task PartTwoTest(string fileName, ActionLevel level);
 
         string? SessionCookie { get; set; }
     }

@@ -80,7 +80,7 @@ namespace ConsoleRunner
             Exit
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var options = CommandLine.Parser.Default.ParseArguments<Options>(args).Value;
 
