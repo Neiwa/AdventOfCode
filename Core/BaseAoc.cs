@@ -184,7 +184,7 @@ namespace Core
             Level = level;
             FileName = fileName;
             Input = ParseInput(GetInput(fileName));
-            var res = (await partMethod(Input)).ToString();
+            var res = await partMethod(Input);
             WriteLine($"Answer: {res}", level: ActionLevel.Info);
         }
     }
