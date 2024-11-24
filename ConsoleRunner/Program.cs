@@ -85,8 +85,9 @@ namespace ConsoleRunner
             var options = CommandLine.Parser.Default.ParseArguments<Options>(args).Value;
 
 
-            new AdventOfCode2022.ReferenceMe();
-            new AdventOfCode2023.ReferenceMe();
+            _ = new AdventOfCode2022.ReferenceMe();
+            _ = new AdventOfCode2023.ReferenceMe();
+            _ = new AdventOfCode2024.ReferenceMe();
 
             ValueCreationDictionary<int, ValueCreationDictionary<int, List<Type>>> types = new();
 
@@ -225,11 +226,11 @@ namespace ConsoleRunner
                                 {
                                     if (inputChoice.Part == 1)
                                     {
-                                        instance.PartOneTest(fileName, inputChoice.Level);
+                                        await instance.PartOneTest(fileName, inputChoice.Level);
                                     }
                                     else
                                     {
-                                        instance.PartTwoTest(fileName, inputChoice.Level);
+                                        await instance.PartTwoTest(fileName, inputChoice.Level);
                                     }
                                 }
                                 catch (Exception ex)
