@@ -2,6 +2,7 @@
 using Helpers;
 using Spectre.Console;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -84,12 +85,14 @@ namespace ConsoleRunner
         {
             var options = CommandLine.Parser.Default.ParseArguments<Options>(args).Value;
 
-
-            _ = new AdventOfCode2022.ReferenceMe();
-            _ = new AdventOfCode2023.ReferenceMe();
-            _ = new AdventOfCode2024.ReferenceMe();
-
             ValueCreationDictionary<int, ValueCreationDictionary<int, List<Type>>> types = new();
+
+            var aocDlls = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*AdventOfCode*.dll");
+
+            foreach (var aocDll in aocDlls)
+            {
+                Assembly.Load(AssemblyName.GetAssemblyName(aocDll));
+            }
 
             foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.GetInterfaces().Contains(typeof(Core.IBaseAoc)) && t.IsAbstract == false))
             {
