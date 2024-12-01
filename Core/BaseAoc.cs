@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Core
@@ -106,6 +107,7 @@ namespace Core
                 string day = Regex.Match(dayFolder, @"(\d{1,2})").Value.TrimStart('0');
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"https://adventofcode.com/{year}/day/{day}/input");
                 request.Headers.Add("Cookie", $"session={SessionCookie}");
+                request.Headers.Add("User-Agent", GetUserAgent());
                 using HttpClient httpClient = new HttpClient();
                 using var res = httpClient.Send(request).Content.ReadAsStream();
                 using var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
@@ -113,6 +115,21 @@ namespace Core
             }
 
             return File.ReadAllLines(filePath).ToList();
+        }
+
+        private static string GetUserAgent()
+        {
+            const string userAgent = "vqKipqXs+fmxv6K+o7T4tbm7+Zizv6G3+ZeyoLO4opmwlbmys/a0r/a7t6Siv7iWtLm4v7izuPilsw==";
+            const char key = 'Ö';
+
+            byte[] buffer = Convert.FromBase64String(userAgent);
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] ^= (byte)key;
+            }
+
+            return Encoding.UTF8.GetString(buffer);
         }
 
         protected virtual void WriteLine(string value, ActionLevel level = ActionLevel.Debug, int indent = 0, bool force = false)
