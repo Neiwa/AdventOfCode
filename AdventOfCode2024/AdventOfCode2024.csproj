@@ -11,4 +11,11 @@
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="**\*.txt" Exclude="bin\**\*.txt;obj\**\*.txt">
+      <TargetPath>$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
