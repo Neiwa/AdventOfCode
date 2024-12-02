@@ -107,7 +107,7 @@ namespace Core
                 string day = Regex.Match(dayFolder, @"(\d{1,2})").Value.TrimStart('0');
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"https://adventofcode.com/{year}/day/{day}/input");
                 request.Headers.Add("Cookie", $"session={SessionCookie}");
-                request.Headers.Add("User-Agent", GetUserAgent());
+                //request.Headers.Add("User-Agent", GetUserAgent());
                 using HttpClient httpClient = new HttpClient();
                 using var res = httpClient.Send(request).Content.ReadAsStream();
                 using var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
