@@ -6,7 +6,7 @@
         {
         }
 
-        public FixedGrid(int width, int height, char value) : base(width, height, value)
+        public FixedGrid(long width, long height, char value) : base(width, height, value)
         {
         }
     }
