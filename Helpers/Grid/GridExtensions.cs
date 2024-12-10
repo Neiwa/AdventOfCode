@@ -17,6 +17,11 @@
             return new FixedIntGrid<T>(lines.Select(l => l.Select(transform).ToArray()).ToArray());
         }
 
+        public static Grid<T> ToGrid<T>(this IEnumerable<string> lines, Func<char, T> transform)
+        {
+            return ToFixedGrid(lines, transform);
+        }
+
         public static Grid<char> ToGrid(this IEnumerable<string> lines)
         {
             return ToFixedGrid(lines);
@@ -40,18 +45,7 @@
 
         public static FixedGrid<char> ToFixedGrid(this IEnumerable<string> lines)
         {
-            char[,] grid = new char[lines.Count(), lines.First().Length];
-            long y = 0;
-            foreach (var line in lines)
-            {
-                long x = 0;
-                foreach (var c in line)
-                {
-                    grid[y, x++] = c;
-                }
-                y++;
-            }
-            return new FixedGrid(grid);
+            return ToFixedGrid(lines, static c => c);
         }
     }
 }
