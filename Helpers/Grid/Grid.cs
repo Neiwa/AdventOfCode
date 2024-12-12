@@ -100,7 +100,7 @@ namespace Helpers.Grid
 
         public Point Point => new(X, Y);
 
-        public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false)
+        public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false, bool includeInvalid = false)
         {
             var shifts = new List<Point>();
             if (includeDiagonal)
@@ -131,7 +131,7 @@ namespace Helpers.Grid
             foreach (var shift in shifts)
             {
                 var @ref = this + shift;
-                if (@ref.IsValid())
+                if (includeInvalid || @ref.IsValid())
                 {
                     yield return @ref;
                 }
