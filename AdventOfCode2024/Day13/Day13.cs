@@ -1,6 +1,7 @@
 ﻿using Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,29 +18,9 @@ namespace AdventOfCode2024.Day13
             long totalCost = 0;
             foreach (var machine in input)
             {
-                //var maxA = Math.Min(machine.Prize.X / machine.A.X, machine.Prize.Y / machine.A.Y);
-                //var maxB = Math.Min(machine.Prize.X / machine.B.Y, machine.Prize.Y / machine.B.Y);
-                var maxA = 100;
-                var maxB = 100;
-
-                long? minCost = null;
-
-                for (var a = 0; a <= maxA; a++)
-                {
-                    for (var b = 0; b <= maxB; b++)
-                    {
-                        if (machine.A * a + machine.B * b == machine.Prize)
-                        {
-                            var cost = a * 3 + b;
-                            if (minCost is null || cost < minCost)
-                            {
-                                minCost = cost;
-                            }
-                        }
-                    }
-                }
-
-                totalCost += minCost ?? 0;
+                var solution = Solve1(machine);
+                WriteLine($"cost={solution.Cost};a={solution.A};b={solution.B}");
+                totalCost += solution.Cost;
             }
 
             return totalCost;
@@ -48,33 +29,111 @@ namespace AdventOfCode2024.Day13
         public override object PartTwo(List<Machine> input)
         {
             long totalCost = 0;
+            int index = 0;
             foreach (var machine in input)
             {
-                var prize = machine.Prize * 10000000000000;
-                var maxA = Math.Min(prize.X / machine.A.X, prize.Y / machine.A.Y);
-                var maxB = Math.Min(prize.X / machine.B.Y, prize.Y / machine.B.Y);
+                var solution = Solve3(machine, prizeAdjust: 10000000000000);
 
-                long? minCost = null;
-
-                for (var a = 0; a <= maxA; a++)
-                {
-                    for (var b = 0; b <= maxB; b++)
-                    {
-                        if (machine.A * a + machine.B * b == prize)
-                        {
-                            var cost = a * 3 + b;
-                            if (minCost is null || cost < minCost)
-                            {
-                                minCost = cost;
-                            }
-                        }
-                    }
-                }
-
-                totalCost += minCost ?? 0;
+                WriteLine($"cost={solution.Cost};a={solution.A};b={solution.B}");
+                totalCost += solution.Cost;
+                index++;
             }
 
             return totalCost;
+        }
+
+        public (long Cost, long? A, long? B) Solve3(Machine machine, long prizeAdjust = 0, long? maxClick = null)
+        {
+            var prize = machine.Prize + new Point(prizeAdjust, prizeAdjust);
+
+            var a = (prize.X * machine.B.Y - machine.B.X * prize.Y) / (machine.A.X * machine.B.Y - machine.B.X * machine.A.Y);
+
+            var b = (machine.A.X * prize.Y - prize.X * machine.A.Y) / (machine.A.X * machine.B.Y - machine.B.X * machine.A.Y);
+
+            if (machine.A * a + machine.B * b == prize)
+            {
+                return (a * 3 + b, a, b);
+            }
+            else
+            {
+                return (0, null, null);
+            }
+        }
+
+        public (long Cost, long? A, long? B) Solve2(Machine machine, long prizeAdjust = 0, long? maxClick = null)
+        {
+            var prize = machine.Prize + new Point(prizeAdjust, prizeAdjust);
+
+            var maxA = Math.Min(prize.X / machine.A.X, prize.Y / machine.A.Y);
+            var maxB = Math.Min(prize.X / machine.B.X, prize.Y / machine.B.Y);
+
+            if (maxClick is not null)
+            {
+                maxA = Math.Min(maxA, maxClick.Value);
+                maxB = Math.Min(maxB, maxClick.Value);
+            }
+
+            long? minCost = null;
+            long? solA = null;
+            long? solB = null;
+
+            for (var a = 0; a <= maxA; a++)
+            {
+                var aPoint = machine.A * a;
+
+                var bRemain = prize - aPoint;
+
+                if (bRemain.X % machine.B.X == 0 && bRemain.Y % machine.B.Y == 0)
+                {
+                    var bX = bRemain.X / machine.B.X;
+                    var bY = bRemain.Y / machine.B.Y;
+                    if (bX != bY)
+                    {
+                        continue;
+                    }
+
+                    var cost = a * 3 + bX;
+                    if (minCost is null || cost < minCost)
+                    {
+                        minCost = cost;
+                        solA = a;
+                        solB = bX;
+                    }
+                }
+            }
+
+            return (minCost ?? 0, solA, solB);
+        }
+
+        public (long Cost, long? A, long? B) Solve1(Machine machine, long prizeAdjust = 0)
+        {
+            var prize = machine.Prize + new Point(prizeAdjust, prizeAdjust);
+
+            var maxA = Math.Min(Math.Min(prize.X / machine.A.X, prize.Y / machine.A.Y), 100);
+            var maxB = Math.Min(Math.Min(prize.X / machine.B.X, prize.Y / machine.B.Y), 100);
+
+            long? minCost = null;
+            long? solA = null;
+            long? solB = null;
+
+            for (var a = 0; a <= maxA; a++)
+            {
+                for (var b = 0; b <= maxB; b++)
+                {
+                    if (machine.A * a + machine.B * b == prize)
+                    {
+                        var cost = a * 3 + b;
+                        if (minCost is null || cost < minCost)
+                        {
+                            minCost = cost;
+                            solA = a;
+                            solB = b;
+                        }
+                    }
+                }
+            }
+
+            return (minCost ?? 0, solA, solB);
         }
 
         protected override List<Machine> ParseInput(List<string> lines)
