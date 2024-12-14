@@ -1,5 +1,9 @@
-﻿namespace Helpers
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
+
+namespace Helpers
 {
+    [DebuggerDisplay("({X}, {Y})")]
     public class Point
     {
         public Point(long x, long y)
@@ -72,6 +76,36 @@
         public override string ToString()
         {
             return $"Point ({X}, {Y})";
+        }
+
+        public static Point Parse(string input, char sep = ',')
+        {
+            if (TryParse(input, out var point, sep))
+            {
+                return point!;
+            }
+
+            throw new ArgumentException("Invalid input string");
+        }
+
+        public static bool TryParse(string input, out Point? point, char sep = ',')
+        {
+            var match = Regex.Match(input, $"(?<x>-?\\d+)\\s*{sep}\\s*(?<x>-?\\d+)");
+            if (match.Success)
+            {
+                point = match.GetPoint("x", "y");
+                return true;
+            }
+            point = null;
+            return false;
+        }
+    }
+
+    public static class PointExtensions
+    {
+        public static Point GetPoint(this Match match, string xName = "x", string yName = "y")
+        {
+            return new Point(long.Parse(match.Groups[xName].Value), long.Parse(match.Groups[yName].Value));
         }
     }
 }

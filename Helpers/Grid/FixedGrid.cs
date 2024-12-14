@@ -15,8 +15,8 @@
     {
         private readonly TValue[,] _grid;
 
-        public override long Height => _grid.GetLongLength(1);
-        public override long Width => _grid.GetLongLength(0);
+        public override long Height => _grid.GetLongLength(0);
+        public override long Width => _grid.GetLongLength(1);
 
         public FixedGrid(TValue[,] values)
         {
