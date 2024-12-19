@@ -1,4 +1,5 @@
-﻿using Helpers.Grid;
+﻿using Helpers.Extensions;
+using Helpers.Grid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,75 @@ namespace AdventOfCode2024.Day16
 
         public override object PartTwo(Puzzle input)
         {
-            throw new NotImplementedException();
+            var (goals, cameFrom) = Search.AStarAll(
+                new State(input.Start, input.Direction),
+                s => s.Pos == input.End,
+                s => (s.Pos - input.End).ManhattanLength,
+                (l, r) => l == r,
+                s =>
+                {
+                    var nextPos = s.Pos + DirectionAsPoint(s.Direction);
+                    List<State> rotations = [
+                        new State(s.Pos, (Direction)(((int)s.Direction + 1) % 4)),
+                        new State(s.Pos, (Direction)(((int)s.Direction + 3) % 4))
+                        ];
+                    return input.Map.ValueAt(nextPos) != '#' ?
+                    rotations.Append(new State(nextPos, s.Direction))
+                    : rotations;
+                },
+                (l, r) => l.Direction != r.Direction ? 1000 : 1
+                );
+
+            HashSet<Point> visited = [];
+            Queue<State> unexplored = new();
+            unexplored.EnqueueRange(goals);
+            while (unexplored.TryDequeue(out var state))
+            {
+                if (visited.Contains(state.Pos))
+                {
+                    continue;
+                }
+
+                State current = state!;
+                while (cameFrom.Keys.Any(n => n == current))
+                {
+                    var nexts = cameFrom[current];
+                    if (nexts.Count > 1)
+                    {
+                        unexplored.EnqueueRange(nexts[1..]);
+                    }
+                    visited.Add(current.Pos);
+                    current = nexts[0];
+                }
+            }
+
+            if (IsDebug)
+            {
+                Draw(input.Map, visited);
+            }
+
+            return visited.Count;
+        }
+
+        void Draw(Grid<char> map, HashSet<Point> visited)
+        {
+            for (int y = 0; y < map.Height; y++)
+            {
+                for (int x = 0; x < map.Width; x++)
+                {
+                    var value = map.ValueAt(x, y);
+                    if (value == '.' && visited.Contains(new Point(x, y)))
+                    {
+                        Write("[white]O[/]");
+                    }
+                    else
+                    {
+                        Write($"[grey]{map.ValueAt(x, y)}[/]");
+                    }
+                }
+                WriteLine();
+            }
+            WriteLine();
         }
 
         protected override Puzzle ParseInput(List<string> lines)
