@@ -90,7 +90,8 @@ namespace Helpers
 
         public static bool TryParse(string input, out Point? point, char sep = ',')
         {
-            var match = Regex.Match(input, $"(?<x>-?\\d+)\\s*{sep}\\s*(?<x>-?\\d+)");
+            var regex = $"(?<x>-?\\d+)\\s*{sep}\\s*(?<y>-?\\d+)";
+            var match = Regex.Match(input, regex);
             if (match.Success)
             {
                 point = match.GetPoint("x", "y");
