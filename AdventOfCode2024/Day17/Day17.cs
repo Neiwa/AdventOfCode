@@ -85,23 +85,39 @@ namespace AdventOfCode2024.Day17
             return result;
         }
 
-        public override object PartTwo(Program input)
+        public override async Task<object> PartTwoAsync(Program input)
         {
-            long a = 0;
+            System.Collections.Concurrent.ConcurrentBag<long> goalAs = [];
+
             string program = string.Join(',', input.Instructions);
-            while (true)
+
+            var aValues = Enumerations.Range(0, 1, long.MaxValue);
+
+            CancellationTokenSource cts = new();
+
+            await Parallel.ForEachAsync(aValues, new ParallelOptions
+            {
+                CancellationToken = cts.Token,
+            }, async (long a, CancellationToken cancellationToken) =>
             {
                 var newInput = new Program()
-                { A = a, B = input.B, C = input.C, Instructions = input.Instructions };
+                { A = a, B = input.B, C = input.C, Instructions = input.Instructions
+                };
 
                 var result = PartOne(newInput) as string;
                 if (result == program)
                 {
-                    return a;
+                    goalAs.Add(a);
+                    await cts.CancelAsync();
                 }
+            });
 
-                a++;
-            }
+            
+            return goalAs.First();
+        }
+
+        public override object PartTwo(Program input)
+        {
             throw new NotImplementedException();
         }
 
@@ -139,9 +155,19 @@ namespace AdventOfCode2024.Day17
         }
 
         [Test]
-        public void EEE()
+        public void Part2Example()
         {
+            var input = """
+                Register A: 117440
+                Register B: 0
+                Register C: 0
 
+                Program: 0,3,5,4,3,0
+                """;
+
+            var result = PartOne(ParseInput(input.Split(Environment.NewLine).ToList()));
+
+            Assert.That(result, Is.EqualTo("0,3,5,4,3,0"));
         }
     }
 }
