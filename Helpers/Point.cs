@@ -1,19 +1,14 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Helpers
 {
     [DebuggerDisplay("({X}, {Y})")]
-    public class Point
+    public class Point(long x, long y)
     {
-        public Point(long x, long y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public long X { get; set; }
-        public long Y { get; set; }
+        public long X { get; set; } = x;
+        public long Y { get; set; } = y;
 
         public long ManhattanLength => Math.Abs(X) + Math.Abs(Y);
 
@@ -70,7 +65,7 @@ namespace Helpers
 
         public override int GetHashCode()
         {
-            return (int)((31 * X + Y) % int.MaxValue);
+            return HashCode.Combine(X, Y);
         }
 
         public override string ToString()
@@ -82,13 +77,13 @@ namespace Helpers
         {
             if (TryParse(input, out var point, sep))
             {
-                return point!;
+                return point;
             }
 
             throw new ArgumentException("Invalid input string");
         }
 
-        public static bool TryParse(string input, out Point? point, char sep = ',')
+        public static bool TryParse(string input, [NotNullWhen(true)] out Point? point, char sep = ',')
         {
             var regex = $"(?<x>-?\\d+)\\s*{sep}\\s*(?<y>-?\\d+)";
             var match = Regex.Match(input, regex);

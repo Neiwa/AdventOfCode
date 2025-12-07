@@ -49,22 +49,15 @@ namespace Helpers.Grid
         }
     }
 
-    public class GridRowReference<TValue>
+    public class GridRowReference<TValue>(Grid<TValue> grid, long row)
     {
-        internal Grid<TValue> _grid;
-        private long _row;
-
-        public GridRowReference(Grid<TValue> grid, long row)
-        {
-            _grid = grid;
-            _row = row;
-        }
+        internal Grid<TValue> _grid = grid;
 
         public GridCellReference<TValue> this[long index]
         {
             get
             {
-                return new GridCellReference<TValue>(_grid, _row, index);
+                return new GridCellReference<TValue>(_grid, row, index);
             }
         }
     }
@@ -100,13 +93,14 @@ namespace Helpers.Grid
 
         public Point Point => new(X, Y);
 
-        public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false, bool includeInvalid = false)
-        {
-            var shifts = new List<Point>();
-            if (includeDiagonal)
-            {
-                shifts = new List<Point>
-                {
+        private static readonly IEnumerable<Point> xyShifts = [
+                    new (0, -1),
+                    new (1, 0),
+                    new (0, 1),
+                    new (-1, 0)
+                ];
+
+        private static readonly IEnumerable<Point> xydShifts = [
                     new (0, -1),
                     new (1, -1),
                     new (1, 0),
@@ -115,18 +109,11 @@ namespace Helpers.Grid
                     new (-1, 1),
                     new (-1, 0),
                     new (-1, -1),
-                };
-            }
-            else
-            {
-                shifts = new List<Point>
-                {
-                    new (0, -1),
-                    new (1, 0),
-                    new (0, 1),
-                    new (-1, 0)
-                };
-            }
+                ];
+
+        public IEnumerable<GridCellReference<TValue>> GetNeighbours(bool includeDiagonal = false, bool includeInvalid = false)
+        {
+            var shifts = includeDiagonal ? xydShifts : xyShifts;
 
             foreach (var shift in shifts)
             {
@@ -165,12 +152,12 @@ namespace Helpers.Grid
 
         public static bool operator ==(GridCellReference<TValue> left, GridCellReference<TValue> right)
         {
-            return left.Point == right.Point && left._grid == right._grid;
+            return left.Equals(right);
         }
 
         public static bool operator !=(GridCellReference<TValue> left, GridCellReference<TValue> right)
         {
-            return left.Point != right.Point || left._grid != right._grid;
+            return !left.Equals(right);
         }
 
         public static bool operator ==(GridCellReference<TValue> left, Point right)
@@ -184,5 +171,25 @@ namespace Helpers.Grid
         }
 
         public static implicit operator Point(GridCellReference<TValue> p) => p.Point;
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj is not null && obj is GridCellReference<TValue> other)
+            {
+                return Point == other.Point && _grid == other._grid;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_grid, X, Y);
+        }
     }
 }

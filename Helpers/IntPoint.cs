@@ -54,7 +54,7 @@
 
         public override int GetHashCode()
         {
-            return 31 * X + Y;
+            return HashCode.Combine(X, Y);
         }
 
         public override string ToString()

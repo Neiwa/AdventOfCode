@@ -40,7 +40,7 @@ namespace Helpers
 
         public override int GetHashCode()
         {
-            return 107 * Z + 31 * X + Y;
+            return HashCode.Combine(X, Y, Z);
         }
     }
 }

@@ -40,7 +40,7 @@ public class Day07 : BaseAocV2
                 }
             }
 
-            beams = newBeams.DistinctBy(b => b.Point).ToList();
+            beams = newBeams.Distinct().ToList();
         }
 
 
@@ -75,7 +75,7 @@ public class Day07 : BaseAocV2
                 }
             }
 
-            beams = newBeams.GroupBy(b => b.Item1.Point).Select(g => (g.First().Item1, g.Sum(b => b.Item2))).ToList();
+            beams = newBeams.GroupBy(b => b.Item1).Select(g => (g.Key, g.Sum(b => b.Item2))).ToList();
         }
 
 
