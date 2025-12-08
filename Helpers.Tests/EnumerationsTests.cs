@@ -31,5 +31,21 @@ namespace Helpers.Tests
             // Assert
             Assert.That(actual, Is.EquivalentTo(subSets));
         }
+
+        [Test]
+        public void SelfJoin_Works()
+        {
+            int[] set = [1, 2, 3];
+
+            var actual = set.SelfJoin((l, r) => (l, r, l + r)).ToList();
+
+            Assert.That(actual, Has.Count.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual[0], Is.EqualTo((1, 2, 3)));
+                Assert.That(actual[1], Is.EqualTo((1, 3, 4)));
+                Assert.That(actual[2], Is.EqualTo((2, 3, 5)));
+            });
+        }
     }
 }

@@ -82,5 +82,36 @@
         {
             return source.Any() ? source.Min(selector) : defaultValue;
         }
+
+        /// <summary>
+        /// Produces a sequence of results by applying a specified function to each pair of elements in the source
+        /// sequence, where the first element in the pair comes before the second.
+        /// </summary>
+        /// <remarks>This method iterates over the source sequence and applies the <paramref
+        /// name="selector"/> function to each pair of elements, ensuring that the first element in the pair always
+        /// precedes the second in the sequence. The resulting sequence contains one result for each such
+        /// pair.</remarks>
+        /// <typeparam name="T">The type of the elements in the source sequence.</typeparam>
+        /// <typeparam name="TOut">The type of the elements in the resulting sequence.</typeparam>
+        /// <param name="source">The sequence of elements to process. Cannot be <see langword="null"/>.</param>
+        /// <param name="selector">A function that takes two elements from the source sequence and returns a result. The first parameter
+        /// represents the earlier element in the sequence, and the second parameter represents the later element.</param>
+        /// <returns>An <see cref="IEnumerable{TOut}"/> containing the results of applying the <paramref name="selector"/>
+        /// function to each pair of elements in the source sequence, where the first element in the pair comes before
+        /// the second.</returns>
+        public static IEnumerable<TOut> SelfJoin<T, TOut>(this IEnumerable<T> source, Func<T, T, TOut> selector)
+        {
+            using var e1 = source.GetEnumerator();
+            int counter = 0;
+            while (e1.MoveNext())
+            {
+                counter++;
+                using var e2 = source.Skip(counter).Select(r => selector(e1.Current, r)).GetEnumerator();
+                while (e2.MoveNext())
+                {
+                    yield return e2.Current;
+                }
+            }
+        }
     }
 }
