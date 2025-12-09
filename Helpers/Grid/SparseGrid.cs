@@ -14,6 +14,11 @@
         private long minX, minY, maxX, maxY;
         private readonly Func<Point, TValue> _valueFactory;
 
+        public long MinX => minX;
+        public long MaxX => maxX;
+        public long MinY => minY;
+        public long MaxY => maxY;
+
         public override long Width => maxX - minX;
         public override long Height => maxY - minY;
 

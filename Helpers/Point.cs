@@ -12,6 +12,18 @@ namespace Helpers
 
         public long ManhattanLength => Math.Abs(X) + Math.Abs(Y);
 
+        /// <summary>
+        /// Returns a new <see cref="Point"/> representing the normalized direction of this point.
+        /// </summary>
+        /// <remarks>The normalization reduces the X and Y components of the point to -1, 0, or 1, 
+        /// indicating the direction of the point along each axis.  This method does not modify the current
+        /// instance.</remarks>
+        /// <returns>A <see cref="Point"/> where each component is -1, 0, or 1, based on the sign of the corresponding component
+        /// of the current point.</returns>
+        public Point Normalized()
+        {
+            return new Point(X > 0 ? 1 : X < 0 ? -1 : 0, Y > 0 ? 1 : Y < 0 ? -1 : 0);
+        }
 
         public static implicit operator Point(IntPoint p) => new Point(p.X, p.Y);
         public static Point operator +(Point left, Point right)
