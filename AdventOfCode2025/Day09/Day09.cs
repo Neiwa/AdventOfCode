@@ -21,6 +21,87 @@ public class Day09 : BaseAocV2
 
     public override object PartTwo(List<string> lines)
     {
+        var points = lines.Select(line => Point.Parse(line)).ToList();
+
+        var xs = points.Select(p => p.X).Order().Distinct().ToList();
+        var ys = points.Select(p => p.Y).Order().Distinct().ToList();
+        var grid = new FixedGrid<char>(xs.Count * 2 + 2, ys.Count * 2 + 2, '.');
+
+        GridCellReference<char> convert(Point orig)
+        {
+            return new GridCellReference<char>(grid, xs.IndexOf(orig.X) * 2 + 1, ys.IndexOf(orig.Y) * 2 + 1);
+        }
+
+        var gPoints = points.Append(points[0]).Select(convert).ToList();
+
+        points.Add(points[0]);
+
+
+        gPoints[0].Value = '#';
+
+        for (int index = 1; index < gPoints.Count; index++)
+        {
+            gPoints[index].Value = '#';
+            var dir = (gPoints[index] - gPoints[index - 1]).Point.Normalized();
+            var curr = gPoints[index - 1];
+            while (curr != gPoints[index])
+            {
+                curr += dir;
+                if (curr.Value != '#')
+                {
+                    curr.Value = 'X';
+                }
+            }
+        }
+
+        FloodFill(grid.At(0, 0), 'O', '.');
+
+        Draw(grid);
+
+        var areas = points.SelfJoin((l, r) => (l, r, area: (1 + Math.Abs(l.X - r.X)) * (1 + Math.Abs(l.Y - r.Y)))).OrderByDescending(t => t.area);
+
+        bool valid(Point l, Point r)
+        {
+            var start = convert(l);
+            var target = convert(r);
+            var dir = (target - start).Point.Normalized();
+
+            int counter = 0;
+
+            for (var y = start.Y; y != target.Y + dir.Y; y+=dir.Y)
+            {
+                for (var x = start.X; x != target.X + dir.X; x+=dir.X)
+                {
+                    counter++;
+                    if (grid.ValueAt(x, y) == 'O')
+                    {
+                        Write($"Fail at {x} {y}");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        foreach (var (l, r, area) in areas)
+        {
+            Write($"{l} {r} Area: {area} ");
+            if (valid(l, r))
+            {
+                WriteLine();
+                WriteLine(l.ToString());
+                WriteLine(r.ToString());
+                return area;
+            }
+            WriteLine();
+        }
+
+        return null;
+    }
+
+    public object PartTwo3(List<string> lines)
+    {
         var grid = new SparseGrid('.');
         var points = lines.Select(line => grid.At(Point.Parse(line))).ToList();
         points.Add(points[0]);
@@ -60,17 +141,21 @@ public class Day09 : BaseAocV2
 
     public void FloodFill(GridCellReference<char> start, char v, char replace)
     {
-        var queue = new Queue<GridCellReference<char>>();
-        queue.Enqueue(start);
+        var stack = new Stack<GridCellReference<char>>();
+        stack.Push(start);
 
-        while (queue.Count > 0)
+        while (stack.Count > 0)
         {
-            var cell = queue.Dequeue();
+            var cell = stack.Pop();
             if (cell.Value == replace)
             {
                 cell.Value = v;
             }
-            queue.EnqueueRange(cell.GetNeighbours().Where(c => c.Value == replace));
+
+            foreach(var neigh in cell.GetNeighbours().Where(c => c.Value == replace))
+            {
+                stack.Push(neigh);
+            }
         }
     }
 
@@ -96,9 +181,9 @@ public class Day09 : BaseAocV2
             return;
         }
 
-        for (int y = 0; y <= grid.Height + 2; y++)
+        for (int y = 0; y < grid.Height; y++)
         {
-            for (int x = 0; x <= grid.Width + 2; x++)
+            for (int x = 0; x < grid.Width; x++)
             {
                 Write(grid.ValueAt(x, y));
             }
