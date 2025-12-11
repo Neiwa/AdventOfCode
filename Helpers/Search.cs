@@ -13,12 +13,12 @@ public static class Search
     /// <param name="getNeighbors"></param>
     /// <param name="edgeWeight">Returns the weight of the edge between two nodes. (Default: 1)</param>
     /// <returns></returns>
-    public static List<T> AStar<T>(T start, T goal, Func<T, long> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, long>? edgeWeight = null) where T : notnull
+    public static List<T> AStar<T>(T start, T goal, Func<T, long> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, long>? edgeWeight = null, IEqualityComparer<T>? equalityComparer = null) where T : notnull
     {
-        return AStar(start, state => compare(state, goal), h, compare, getNeighbors, edgeWeight);
+        return AStar(start, state => compare(state, goal), h, compare, getNeighbors, edgeWeight, equalityComparer);
     }
 
-    public static List<T> AStar<T>(T start, Func<T, bool> goalReached, Func<T, long> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, long>? edgeWeight = null) where T : notnull
+    public static List<T> AStar<T>(T start, Func<T, bool> goalReached, Func<T, long> h, Func<T, T, bool> compare, Func<T, IEnumerable<T>> getNeighbors, Func<T, T, long>? edgeWeight = null, IEqualityComparer<T>? equalityComparer = null) where T : notnull
     {
         if (edgeWeight == null)
         {
@@ -26,9 +26,9 @@ public static class Search
         }
 
         List<T> openSet = new() { start };
-        Dictionary<T, T> cameFrom = new();
-        Dictionary<T, long> gScore = new() { { start, 0 } };
-        Dictionary<T, long> fScore = new() { { start, h(start) } };
+        Dictionary<T, T> cameFrom = new(equalityComparer);
+        Dictionary<T, long> gScore = new(equalityComparer) { { start, 0 } };
+        Dictionary<T, long> fScore = new(equalityComparer) { { start, h(start) } };
 
         long getGScore(T pos)
         {
